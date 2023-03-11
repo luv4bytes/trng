@@ -1,0 +1,21 @@
+[package]
+name = "trng"
+version = "0.1.0"
+edition = "2021"
+authors = ["Lukas Pfeifer"]
+description = "The TRNG interpreter library and playground."
+keywords = ["trng", "brainfuck", "turing"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tui = "0.19"
+crossterm = "0.25"
+
+[lib]
+name = "trng"
+path = "src/lib/lib.rs"
+
+[[bin]]
+name = "trng"
+path = "src/bin/trng/main.rs"
