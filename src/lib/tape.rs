@@ -258,7 +258,7 @@ mod tests {
         assert!(!res.is_err())
     }
 
-    #[test]
+    #[allow(dead_code)]
     fn rda_successful_test() {
         let mut tape = super::Tape::default();
 

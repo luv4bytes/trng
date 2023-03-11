@@ -11,6 +11,23 @@ It works based on the same principle with a few modifications to make writing pr
 
 ## Instruction codes
 
+### Instruction table
+
+|Op code          |Arguments|Description  |
+------------------|---------|-------------|
+|[pfw](#pfw)      |[integer]|Moves the cell pointer one step forward.
+|[pbw](#pbw)      |[integer]|Moves the cell pointer one step back.
+|[inc](#inc)      |[integer]|Increments the value of the current cell by [integer].
+|[dec](#dec)      |[integer]|Decrements the value of the current cell by [integer].
+|[set](#set)      |[value]  |Sets the given [value], placing each byte in a separate cell and incrementing the pointer accordingly.
+|[wrt](#wrt)      |         |Write the value of the current cell to the standard output.
+|[wrti](#wrti)    |         |Write the value of the current cell to the standard output. The value is interpreted as an integer.
+|[wra](#wra)      |         |Write all bytes from the current cell on to the standard output until a null byte is encountered.
+|[rdi](#rdi)      |         |Reads the next byte from standard input and stores it in the current cell.
+|[rda](#rda)      |         |Reads all bytes from standard input until LF is encountered and stores them in separate cells.
+|[clr](#clr)      |         |Writes a null byte to the current cell and all following cells while the current cell is not a null byte. The pointer is moved accordingly.
+
+
 ### Cell instructions
 
 #### PFW
@@ -177,27 +194,3 @@ Example:
     wra
     pbw 5
     clr
-
-### Loops
-
-#### LOP
-LOP (loop) starts a loop. All following instructions are executed until a POL is encountered. At this point the value of the current cell is checked if it is null. If the current cell value is null the interpreter jumps back to the start of the loop. If it is not, it proceeds with the following instructions after the end of the loop.
-
-Syntax:
-
-    lop
-
-Example:
-
-    inc 10
-    lop
-    dec 1
-    pol
-    set Hello
-    pbw 5
-    wra
-
-#### POL
-POL (end loop) ends the current loop if the current cell value is null.
-
-For an example check [LOP](#lop).

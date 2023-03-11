@@ -32,9 +32,9 @@ pub enum TokenType {
     Wrt,
     /// Write the value of the current cell as an integer.
     Wrti,
-    /// Set each byte of a given value into separate cells and move the pointer accordingly.
+    /// Sets the given value, placing each byte in a separate cell and incrementing the pointer accordingly.
     Set,
-    /// Writes all bytes from the current cell on until a null byte is encountered. The pointer is incremented accordingly.
+    /// Writes all bytes of the given value from the current cell on. The pointer is incremented accordingly.
     Wra,
     /// Writes a null byte to the current cell and all following cells until a null byte is encountered. The pointer is incremented accordingly.    
     Clr,
