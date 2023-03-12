@@ -119,18 +119,21 @@ Example:
     inc 72
     wrt
 
-#### WRTI
+#### WRTI*    
 
-WRTI (write current as integer) is used to read the current cell value as an integer and write it to the standard output.
+WRTI* (write current as *-bit) is used to interpret the current cell and all following necessary cells as an *-bit integer and write it to standard output.
 
 Syntax:
 
-    wrti
+    wrti8
+    wrti16
+    wrti32
+    wrti64
 
 Example:
 
     inc 123
-    wrti
+    wrti8
 
     Output => "123"
 
