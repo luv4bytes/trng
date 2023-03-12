@@ -46,8 +46,14 @@ pub enum TokenType {
     Rda,
     /// Write the current cell value to stdout.
     Wrt,
-    /// Write the value of the current cell as an integer.
-    Wrti,
+    /// Write the value of the current cell as an 8-bit signed integer.
+    Wrti8,
+    /// Writes the current cell and the next interpreted as an 16-bit signed integer.
+    Wrti16,
+    /// Writes the current cell and the next two interpreted as an 32-bit signed integer.
+    Wrti32,
+    /// Writes the current cell and the next seven interpreted as an 64-bit signed integer.
+    Wrti64,
     /// Sets the given value, placing each byte in a separate cell and incrementing the pointer accordingly.
     Set,
     /// Writes all bytes of the given value from the current cell on. The pointer is incremented accordingly.
@@ -156,7 +162,10 @@ impl Lexer {
                 &"inc" => Some(self.token_from_internal(TokenType::Inc)),
                 &"dec" => Some(self.token_from_internal(TokenType::Dec)),
                 &"wrt" => Some(self.token_from_internal(TokenType::Wrt)),
-                &"wrti" => Some(self.token_from_internal(TokenType::Wrti)),
+                &"wrti" => Some(self.token_from_internal(TokenType::Wrti8)),
+                &"wrti16" => Some(self.token_from_internal(TokenType::Wrti16)),
+                &"wrti32" => Some(self.token_from_internal(TokenType::Wrti32)),
+                &"wrti64" => Some(self.token_from_internal(TokenType::Wrti64)),
                 &"rdi" => Some(self.token_from_internal(TokenType::Rdi)),
                 &"rda" => Some(self.token_from_internal(TokenType::Rda)),
                 &"set" => Some(self.token_from_internal(TokenType::Set)),

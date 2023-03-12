@@ -125,8 +125,41 @@ impl Interpreter {
                         }
                     }
                 }
-                lexer::TokenType::Wrti => {
-                    let wrti_res = self.tape.wrti();
+                lexer::TokenType::Wrti8 => {
+                    let wrti_res = self.tape.wrti8();
+                    match wrti_res {
+                        Ok(_) => (),
+                        Err(e) => {
+                            return Err(InterpreterError {
+                                description: e.to_string(),
+                            })
+                        }
+                    }
+                }
+                lexer::TokenType::Wrti16 => {
+                    let wrti_res = self.tape.wrti16();
+                    match wrti_res {
+                        Ok(_) => (),
+                        Err(e) => {
+                            return Err(InterpreterError {
+                                description: e.to_string(),
+                            })
+                        }
+                    }
+                }
+                lexer::TokenType::Wrti32 => {
+                    let wrti_res = self.tape.wrti32();
+                    match wrti_res {
+                        Ok(_) => (),
+                        Err(e) => {
+                            return Err(InterpreterError {
+                                description: e.to_string(),
+                            })
+                        }
+                    }
+                }
+                lexer::TokenType::Wrti64 => {
+                    let wrti_res = self.tape.wrti64();
                     match wrti_res {
                         Ok(_) => (),
                         Err(e) => {

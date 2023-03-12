@@ -85,12 +85,58 @@ impl Tape {
         Ok(())
     }
 
-    /// Writes the value of the current cell as an integer to stdout.
-    pub fn wrti(&mut self) -> Result<(), std::io::Error> {
+    /// Writes the value of the current cell as an 8-bit integer to stdout.
+    pub fn wrti8(&mut self) -> Result<(), std::io::Error> {
         let b = self.get_current_value();
         let i = b.to_string();
 
         std::io::stdout().lock().write_all(i.as_bytes())?;
+
+        Ok(())
+    }
+
+    /// Writes the current cell and the next interpreted as an 16-bit signed integer.
+    pub fn wrti16(&mut self) -> Result<(), std::io::Error> {
+        let slice = &self.data[self.ptr_index..];
+        let resi16 = slice[1] as i16 | (slice[0] as i16) << 8;
+
+        let s = resi16.to_string();
+
+        std::io::stdout().lock().write_all(s.as_bytes())?;
+
+        Ok(())
+    }
+
+    /// Writes the current cell and the next three interpreted as an 32-bit signed integer.
+    pub fn wrti32(&mut self) -> Result<(), std::io::Error> {
+        let slice = &self.data[self.ptr_index..];
+        let resi32 = slice[3] as i32
+            | (slice[2] as i32) << 8
+            | (slice[1] as i32) << 16
+            | (slice[0] as i32) << 24;
+
+        let s = resi32.to_string();
+
+        std::io::stdout().lock().write_all(s.as_bytes())?;
+
+        Ok(())
+    }
+
+    /// Writes the current cell and the next seven interpreted as an 64-bit signed integer.
+    pub fn wrti64(&mut self) -> Result<(), std::io::Error> {
+        let slice = &self.data[self.ptr_index..];
+        let resi64 = slice[7] as i64
+            | (slice[6] as i64) << 8
+            | (slice[5] as i64) << 16
+            | (slice[4] as i64) << 24
+            | (slice[3] as i64) << 32
+            | (slice[2] as i64) << 40
+            | (slice[1] as i64) << 48
+            | (slice[0] as i64) << 56;
+
+        let s = resi64.to_string();
+
+        std::io::stdout().lock().write_all(s.as_bytes())?;
 
         Ok(())
     }
@@ -248,7 +294,57 @@ mod tests {
     fn wrti_successful_test() {
         let mut tape = super::Tape::default();
         tape.inc(255);
-        let res = tape.wrti();
+        let res = tape.wrti8();
+
+        assert!(!res.is_err());
+    }
+
+    #[test]
+    fn wrti16_successful_test() {
+        let mut tape = super::Tape::default();
+        tape.inc(16);
+        tape.pfw(1);
+        tape.inc(16);
+        tape.pbw(1);
+        let res = tape.wrti16();
+
+        assert!(!res.is_err());
+    }
+
+    #[test]
+    fn wrti32_successful_test() {
+        let mut tape = super::Tape::default();
+        tape.inc(16);
+        tape.pfw(1);
+        tape.inc(16);
+        tape.pfw(1);
+        tape.inc(16);
+        tape.pbw(2);
+        let res = tape.wrti32();
+
+        assert!(!res.is_err());
+    }
+
+    #[test]
+    fn wrti64_successful_test() {
+        let mut tape = super::Tape::default();
+        tape.inc(1);
+        tape.pfw(1);
+        tape.inc(0);
+        tape.pfw(1);
+        tape.inc(0);
+        tape.pfw(1);
+        tape.inc(0);
+        tape.pfw(1);
+        tape.inc(0);
+        tape.pfw(1);
+        tape.inc(0);
+        tape.pfw(1);
+        tape.inc(0);
+        tape.pfw(1);
+        tape.inc(0);
+        tape.pbw(7);
+        let res = tape.wrti64();
 
         assert!(!res.is_err());
     }
