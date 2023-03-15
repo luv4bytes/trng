@@ -1,0 +1,51 @@
+/// Defines error types for tape errors.
+#[derive(Debug)]
+pub enum TapeErrorType {
+    ArithmeticError,
+    IoError,
+}
+
+impl std::fmt::Display for TapeErrorType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            TapeErrorType::ArithmeticError => {
+                write!(f, "{}", "Arithmetic error")
+            }
+            TapeErrorType::IoError => {
+                write!(f, "{}", "IO error")
+            }
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct TapeError {
+    description: String,
+    _type: TapeErrorType,
+}
+
+impl std::fmt::Display for TapeError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Tape Error [{}]: {}", self._type, self.description)
+    }
+}
+
+impl std::error::Error for TapeError {}
+
+impl From<std::io::Error> for TapeError {
+    fn from(value: std::io::Error) -> Self {
+        TapeError {
+            description: value.to_string(),
+            _type: TapeErrorType::IoError,
+        }
+    }
+}
+
+impl TapeError {
+    pub fn new(_type: TapeErrorType, description: String) -> TapeError {
+        TapeError {
+            _type: _type,
+            description: description,
+        }
+    }
+}

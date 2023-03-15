@@ -14,7 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use crate::{lexer, settings::InterpreterSettings, tape};
+use crate::{
+    lexer,
+    settings::InterpreterSettings,
+    tape::{self, TapeError},
+};
 use std::io::Read;
 
 /// Defines an error that occurs during runtime.
@@ -30,6 +34,14 @@ impl std::fmt::Display for InterpreterError {
 }
 
 impl std::error::Error for InterpreterError {}
+
+impl From<TapeError> for InterpreterError {
+    fn from(value: TapeError) -> Self {
+        InterpreterError {
+            description: value.to_string(),
+        }
+    }
+}
 
 /// Defines data for the interpreter.
 pub struct Interpreter {
@@ -100,84 +112,72 @@ impl Interpreter {
             match token._type {
                 lexer::TokenType::Pfw => {
                     let steps = expect_num::<usize>(token_iter.next())?;
-                    self.tape.pfw(steps);
+                    match self.tape.pfw(steps) {
+                        Ok(_) => (),
+                        Err(e) => return Err(InterpreterError::from(e)),
+                    }
                 }
                 lexer::TokenType::Pbw => {
                     let steps = expect_num::<usize>(token_iter.next())?;
-                    self.tape.pbw(steps);
+                    match self.tape.pbw(steps) {
+                        Ok(_) => (),
+                        Err(e) => return Err(InterpreterError::from(e)),
+                    }
                 }
                 lexer::TokenType::Inc => {
                     let by = expect_num::<u8>(token_iter.next())?;
-                    self.tape.inc(by);
+                    match self.tape.inc(by) {
+                        Ok(_) => (),
+                        Err(e) => return Err(InterpreterError::from(e)),
+                    }
                 }
                 lexer::TokenType::Dec => {
                     let by = expect_num::<u8>(token_iter.next())?;
-                    self.tape.dec(by);
+                    match self.tape.dec(by) {
+                        Ok(_) => (),
+                        Err(e) => return Err(InterpreterError::from(e)),
+                    }
                 }
                 lexer::TokenType::Wrt => {
                     let wrt_res = self.tape.wrt();
                     match wrt_res {
                         Ok(_) => (),
-                        Err(e) => {
-                            return Err(InterpreterError {
-                                description: e.to_string(),
-                            })
-                        }
+                        Err(e) => return Err(InterpreterError::from(e)),
                     }
                 }
                 lexer::TokenType::Wrti8 => {
                     let wrti_res = self.tape.wrti8();
                     match wrti_res {
                         Ok(_) => (),
-                        Err(e) => {
-                            return Err(InterpreterError {
-                                description: e.to_string(),
-                            })
-                        }
+                        Err(e) => return Err(InterpreterError::from(e)),
                     }
                 }
                 lexer::TokenType::Wrti16 => {
                     let wrti_res = self.tape.wrti16();
                     match wrti_res {
                         Ok(_) => (),
-                        Err(e) => {
-                            return Err(InterpreterError {
-                                description: e.to_string(),
-                            })
-                        }
+                        Err(e) => return Err(InterpreterError::from(e)),
                     }
                 }
                 lexer::TokenType::Wrti32 => {
                     let wrti_res = self.tape.wrti32();
                     match wrti_res {
                         Ok(_) => (),
-                        Err(e) => {
-                            return Err(InterpreterError {
-                                description: e.to_string(),
-                            })
-                        }
+                        Err(e) => return Err(InterpreterError::from(e)),
                     }
                 }
                 lexer::TokenType::Wrti64 => {
                     let wrti_res = self.tape.wrti64();
                     match wrti_res {
                         Ok(_) => (),
-                        Err(e) => {
-                            return Err(InterpreterError {
-                                description: e.to_string(),
-                            })
-                        }
+                        Err(e) => return Err(InterpreterError::from(e)),
                     }
                 }
                 lexer::TokenType::Rdi => {
                     let rdi_res = self.tape.rdi();
                     match rdi_res {
                         Ok(_) => (),
-                        Err(e) => {
-                            return Err(InterpreterError {
-                                description: e.to_string(),
-                            })
-                        }
+                        Err(e) => return Err(InterpreterError::from(e)),
                     }
                 }
                 lexer::TokenType::Set => {
@@ -187,11 +187,7 @@ impl Interpreter {
                             let set_res = self.tape.set(&t.value);
                             match set_res {
                                 Ok(_) => (),
-                                Err(e) => {
-                                    return Err(InterpreterError {
-                                        description: e.to_string(),
-                                    })
-                                }
+                                Err(e) => return Err(InterpreterError::from(e)),
                             }
                         }
                         None => {
@@ -205,25 +201,23 @@ impl Interpreter {
                     let wra_res = self.tape.wra();
                     match wra_res {
                         Ok(_) => (),
-                        Err(e) => {
-                            return Err(InterpreterError {
-                                description: e.to_string(),
-                            })
-                        }
+                        Err(e) => return Err(InterpreterError::from(e)),
                     }
                 }
                 lexer::TokenType::Rda => {
                     let rda_res = self.tape.rda();
                     match rda_res {
                         Ok(_) => (),
-                        Err(e) => {
-                            return Err(InterpreterError {
-                                description: e.to_string(),
-                            })
-                        }
+                        Err(e) => return Err(InterpreterError::from(e)),
                     }
                 }
-                lexer::TokenType::Clr => self.tape.clr(),
+                lexer::TokenType::Clr => {
+                    let clr_res = self.tape.clr();
+                    match clr_res {
+                        Ok(_) => (),
+                        Err(e) => return Err(InterpreterError::from(e)),
+                    }
+                }
                 lexer::TokenType::Lop => {
                     todo!()
                     // TODO:
