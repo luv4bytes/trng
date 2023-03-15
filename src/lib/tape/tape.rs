@@ -217,7 +217,7 @@ impl Tape {
                         break;
                     }
 
-                    self.store(byte);
+                    self.store(byte)?;
                     self.step_fw();
                 }
                 Err(e) => return Err(TapeError::from(e)),
@@ -230,7 +230,7 @@ impl Tape {
     /// Writes a null byte to the current cell and all following cells until a null byte is encountered.
     /// The pointer is incremented accordingly.
     pub fn clr(&mut self) -> Result<(), TapeError> {
-        self.store(0);
+        self.store(0)?;
         loop {
             self.step_fw();
 
@@ -240,7 +240,7 @@ impl Tape {
                 break;
             }
 
-            self.store(0);
+            self.store(0)?;
         }
 
         Ok(())
@@ -263,7 +263,7 @@ mod tests {
     fn tape_pfw_by_1_equals_current_plus_1_test() {
         let mut tape = super::Tape::default();
 
-        tape.pfw(1);
+        tape.pfw(1).unwrap();
 
         assert_eq!(tape.ptr_index, 1);
     }
@@ -275,8 +275,8 @@ mod tests {
         let fwd = 20;
         let bwd = 5;
 
-        tape.pfw(fwd);
-        tape.pbw(bwd);
+        tape.pfw(fwd).unwrap();
+        tape.pbw(bwd).unwrap();
 
         assert_eq!(tape.ptr_index, fwd - bwd);
     }
@@ -288,7 +288,7 @@ mod tests {
         let by = 72;
 
         let value_before = tape.data[tape.ptr_index];
-        tape.inc(by);
+        tape.inc(by).unwrap();
         let value_after = tape.data[tape.ptr_index];
 
         assert_eq!(value_after, value_before + by);
@@ -298,9 +298,9 @@ mod tests {
     fn tape_dec_by_n_equals_cell_value_plus_n_test() {
         let mut tape = super::Tape::default();
 
-        tape.inc(100);
+        tape.inc(100).unwrap();
         let by = 50;
-        tape.dec(by);
+        tape.dec(by).unwrap();
         let value_after = tape.get_current_value();
 
         assert_eq!(value_after.unwrap(), 50);
@@ -309,7 +309,7 @@ mod tests {
     #[test]
     fn wrt_successful_test() {
         let mut tape = super::Tape::default();
-        tape.inc(72);
+        tape.inc(72).unwrap();
         let res = tape.wrt();
 
         assert!(!res.is_err());
@@ -318,7 +318,7 @@ mod tests {
     #[test]
     fn wrti_successful_test() {
         let mut tape = super::Tape::default();
-        tape.inc(255);
+        tape.inc(255).unwrap();
         let res = tape.wrti8();
 
         assert!(!res.is_err());
@@ -327,10 +327,10 @@ mod tests {
     #[test]
     fn wrti16_successful_test() {
         let mut tape = super::Tape::default();
-        tape.inc(16);
-        tape.pfw(1);
-        tape.inc(16);
-        tape.pbw(1);
+        tape.inc(16).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(16).unwrap();
+        tape.pbw(1).unwrap();
         let res = tape.wrti16();
 
         assert!(!res.is_err());
@@ -339,12 +339,12 @@ mod tests {
     #[test]
     fn wrti32_successful_test() {
         let mut tape = super::Tape::default();
-        tape.inc(16);
-        tape.pfw(1);
-        tape.inc(16);
-        tape.pfw(1);
-        tape.inc(16);
-        tape.pbw(2);
+        tape.inc(16).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(16).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(16).unwrap();
+        tape.pbw(2).unwrap();
         let res = tape.wrti32();
 
         assert!(!res.is_err());
@@ -353,22 +353,22 @@ mod tests {
     #[test]
     fn wrti64_successful_test() {
         let mut tape = super::Tape::default();
-        tape.inc(1);
-        tape.pfw(1);
-        tape.inc(0);
-        tape.pfw(1);
-        tape.inc(0);
-        tape.pfw(1);
-        tape.inc(0);
-        tape.pfw(1);
-        tape.inc(0);
-        tape.pfw(1);
-        tape.inc(0);
-        tape.pfw(1);
-        tape.inc(0);
-        tape.pfw(1);
-        tape.inc(0);
-        tape.pbw(7);
+        tape.inc(1).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pbw(7).unwrap();
         let res = tape.wrti64();
 
         assert!(!res.is_err());
@@ -389,7 +389,7 @@ mod tests {
         let mut res = tape.set("Hello");
         assert!(!res.is_err());
 
-        tape.pbw(5);
+        tape.pbw(5).unwrap();
         res = tape.wra();
 
         assert!(!res.is_err())
@@ -411,8 +411,8 @@ mod tests {
         let res = tape.set("Hello");
         assert!(!res.is_err());
 
-        tape.pbw(5);
-        tape.clr();
+        tape.pbw(5).unwrap();
+        tape.clr().unwrap();
 
         assert_eq!(tape.get_current_value().unwrap(), 0)
     }
