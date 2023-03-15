@@ -95,9 +95,9 @@ impl Tape {
         }
     }
 
-    /// Writes the value of the current cell as an 8-bit integer to stdout.
+    /// Writes the value of the current cell as an 8-bit signed integer to stdout.
     pub fn wrti8(&mut self) -> Result<(), TapeError> {
-        let b = self.get_current_value()?;
+        let b = self.get_current_value()? as i8;
         let i = b.to_string();
 
         let write_res = std::io::stdout().lock().write_all(i.as_bytes());
@@ -108,7 +108,7 @@ impl Tape {
         }
     }
 
-    /// Writes the current cell and the next interpreted as an 16-bit signed integer.
+    /// Writes the current cell and the next interpreted as an 16-bit signed integer to stdout.
     pub fn wrti16(&mut self) -> Result<(), TapeError> {
         let slice = &self.data[self.ptr_index..];
         let resi16 = slice[1] as i16 | (slice[0] as i16) << 8;
@@ -123,7 +123,7 @@ impl Tape {
         }
     }
 
-    /// Writes the current cell and the next three interpreted as an 32-bit signed integer.
+    /// Writes the current cell and the next three interpreted as an 32-bit signed integer to stdout.
     pub fn wrti32(&mut self) -> Result<(), TapeError> {
         let slice = &self.data[self.ptr_index..];
         let resi32 = slice[3] as i32
@@ -141,7 +141,7 @@ impl Tape {
         }
     }
 
-    /// Writes the current cell and the next seven interpreted as an 64-bit signed integer.
+    /// Writes the current cell and the next seven interpreted as an 64-bit signed integer to stdout.
     pub fn wrti64(&mut self) -> Result<(), TapeError> {
         let slice = &self.data[self.ptr_index..];
         let resi64 = slice[7] as i64
@@ -152,6 +152,74 @@ impl Tape {
             | (slice[2] as i64) << 40
             | (slice[1] as i64) << 48
             | (slice[0] as i64) << 56;
+
+        let s = resi64.to_string();
+
+        let write_res = std::io::stdout().lock().write_all(s.as_bytes());
+
+        match write_res {
+            Ok(_) => Ok(()),
+            Err(e) => Err(TapeError::from(e)),
+        }
+    }
+
+    /// Writes the value of the current cell as an 8-bit unsigned integer to stdout.
+    pub fn wrtu8(&mut self) -> Result<(), TapeError> {
+        let b = self.get_current_value()?;
+        let i = b.to_string();
+
+        let write_res = std::io::stdout().lock().write_all(i.as_bytes());
+
+        match write_res {
+            Ok(_) => Ok(()),
+            Err(e) => Err(TapeError::from(e)),
+        }
+    }
+
+    /// Writes the current cell and the next interpreted as an 16-bit unsigned integer to stdout.
+    pub fn wrtu16(&mut self) -> Result<(), TapeError> {
+        let slice = &self.data[self.ptr_index..];
+        let resu16 = slice[1] as u16 | (slice[0] as u16) << 8;
+
+        let s = resu16.to_string();
+
+        let write_res = std::io::stdout().lock().write_all(s.as_bytes());
+
+        match write_res {
+            Ok(_) => Ok(()),
+            Err(e) => Err(TapeError::from(e)),
+        }
+    }
+
+    /// Writes the current cell and the next three interpreted as an 32-bit signed integer to stdout.
+    pub fn wrtu32(&mut self) -> Result<(), TapeError> {
+        let slice = &self.data[self.ptr_index..];
+        let resu32 = slice[3] as u32
+            | (slice[2] as u32) << 8
+            | (slice[1] as u32) << 16
+            | (slice[0] as u32) << 24;
+
+        let s = resu32.to_string();
+
+        let write_res = std::io::stdout().lock().write_all(s.as_bytes());
+
+        match write_res {
+            Ok(_) => Ok(()),
+            Err(e) => Err(TapeError::from(e)),
+        }
+    }
+
+    /// Writes the current cell and the next seven interpreted as an 64-bit unsigned integer to stdout.
+    pub fn wrtu64(&mut self) -> Result<(), TapeError> {
+        let slice = &self.data[self.ptr_index..];
+        let resi64 = slice[7] as u64
+            | (slice[6] as u64) << 8
+            | (slice[5] as u64) << 16
+            | (slice[4] as u64) << 24
+            | (slice[3] as u64) << 32
+            | (slice[2] as u64) << 40
+            | (slice[1] as u64) << 48
+            | (slice[0] as u64) << 56;
 
         let s = resi64.to_string();
 
@@ -316,9 +384,9 @@ mod tests {
     }
 
     #[test]
-    fn wrti_successful_test() {
+    fn wrti8_successful_test() {
         let mut tape = super::Tape::default();
-        tape.inc(255).unwrap();
+        tape.inc(127).unwrap();
         let res = tape.wrti8();
 
         assert!(!res.is_err());
@@ -370,6 +438,65 @@ mod tests {
         tape.inc(0).unwrap();
         tape.pbw(7).unwrap();
         let res = tape.wrti64();
+
+        assert!(!res.is_err());
+    }
+
+    #[test]
+    fn wrtu8_successful_test() {
+        let mut tape = super::Tape::default();
+        tape.inc(255).unwrap();
+        let res = tape.wrtu8();
+
+        assert!(!res.is_err());
+    }
+
+    #[test]
+    fn wrtu16_successful_test() {
+        let mut tape = super::Tape::default();
+        tape.inc(16).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(16).unwrap();
+        tape.pbw(1).unwrap();
+        let res = tape.wrtu16();
+
+        assert!(!res.is_err());
+    }
+
+    #[test]
+    fn wrtu32_successful_test() {
+        let mut tape = super::Tape::default();
+        tape.inc(16).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(16).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(16).unwrap();
+        tape.pbw(2).unwrap();
+        let res = tape.wrtu32();
+
+        assert!(!res.is_err());
+    }
+
+    #[test]
+    fn wrtu64_successful_test() {
+        let mut tape = super::Tape::default();
+        tape.inc(1).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pbw(7).unwrap();
+        let res = tape.wrtu64();
 
         assert!(!res.is_err());
     }

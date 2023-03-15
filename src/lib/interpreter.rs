@@ -173,6 +173,34 @@ impl Interpreter {
                         Err(e) => return Err(InterpreterError::from(e)),
                     }
                 }
+                lexer::TokenType::Wrtu8 => {
+                    let wrti_res = self.tape.wrtu8();
+                    match wrti_res {
+                        Ok(_) => (),
+                        Err(e) => return Err(InterpreterError::from(e)),
+                    }
+                }
+                lexer::TokenType::Wrtu16 => {
+                    let wrti_res = self.tape.wrtu16();
+                    match wrti_res {
+                        Ok(_) => (),
+                        Err(e) => return Err(InterpreterError::from(e)),
+                    }
+                }
+                lexer::TokenType::Wrtu32 => {
+                    let wrti_res = self.tape.wrtu32();
+                    match wrti_res {
+                        Ok(_) => (),
+                        Err(e) => return Err(InterpreterError::from(e)),
+                    }
+                }
+                lexer::TokenType::Wrtu64 => {
+                    let wrti_res = self.tape.wrtu64();
+                    match wrti_res {
+                        Ok(_) => (),
+                        Err(e) => return Err(InterpreterError::from(e)),
+                    }
+                }
                 lexer::TokenType::Rdi => {
                     let rdi_res = self.tape.rdi();
                     match rdi_res {
