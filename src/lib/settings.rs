@@ -16,6 +16,7 @@
 
 const DEFAULT_TAPE_SIZE: usize = 30000;
 
+/// Holds settings for configuring the TRNG interpreter.
 pub struct InterpreterSettings {
     pub data_tape_sz: usize,
 }
