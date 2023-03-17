@@ -306,7 +306,7 @@ impl Tape {
 
             match std::io::stdout().lock().write_all(&[b]) {
                 Ok(_) => {
-                    self.step_fw();
+                    self.step_fw()?;
                 }
                 Err(e) => return Err(TapeError::from(e)),
             }
@@ -326,7 +326,7 @@ impl Tape {
                     }
 
                     self.store(byte)?;
-                    self.step_fw();
+                    self.step_fw()?;
                 }
                 Err(e) => return Err(TapeError::from(e)),
             }
@@ -340,7 +340,7 @@ impl Tape {
     pub fn clr(&mut self) -> Result<(), TapeError> {
         self.store(0)?;
         loop {
-            self.step_fw();
+            self.step_fw()?;
 
             let b = self.get_current_value()?;
 
@@ -354,8 +354,16 @@ impl Tape {
         Ok(())
     }
 
-    fn step_fw(&mut self) {
-        self.ptr_index += 1;
+    fn step_fw(&mut self) -> Result<(), TapeError> {
+        let moved = self.ptr_index.checked_add(1);
+        match moved {
+            Some(n) => Ok(self.ptr_index = n),
+            None => Err(TapeError::new(
+                super::TapeErrorType::IndexError,
+                "Moving the pointer 1 step forward would result in overshooting the tape."
+                    .to_string(),
+            )),
+        }
     }
 
     fn store(&mut self, byte: u8) -> Result<(), TapeError> {
