@@ -55,6 +55,16 @@ impl Tape {
     ///
     /// * `steps` - The number of steps to move forward on the tape.
     pub fn pfw(&mut self, steps: usize) -> Result<(), TapeError> {
+        if self.ptr_index + steps >= self.data.capacity() {
+            return Err(TapeError::new(
+                super::TapeErrorType::IndexError,
+                format!(
+                    "Moving the pointer {} step(s) forward would result in overshooting the tape.",
+                    steps
+                ),
+            ));
+        }
+
         self.ptr_index = self.ptr_index + steps;
         Ok(())
     }
@@ -63,24 +73,54 @@ impl Tape {
     ///
     /// * `steps` - The number of steps to move backward on the tape.
     pub fn pbw(&mut self, steps: usize) -> Result<(), TapeError> {
-        self.ptr_index = self.ptr_index - steps;
-        Ok(())
+        let subbed = self.ptr_index.checked_sub(steps);
+
+        match subbed {
+            Some(n) => Ok(self.ptr_index = n),
+            None => Err(TapeError::new(
+                super::TapeErrorType::IndexError,
+                format!(
+                    "Moving the pointer {} step(s) backward would result in overshooting the tape.",
+                    steps
+                ),
+            )),
+        }
     }
 
     /// Increments the value of the current cell
     ///
     /// * `by` - This value gets added to the value of the current cell.
     pub fn inc(&mut self, by: u8) -> Result<(), TapeError> {
-        self.data[self.ptr_index] = self.get_current_value()? + by;
-        Ok(())
+        let added = self.get_current_value()?.checked_add(by);
+
+        match added {
+            Some(n) => Ok(self.data[self.ptr_index] = n),
+            None => Err(TapeError::new(
+                super::TapeErrorType::OverflowError,
+                format!(
+                    "Adding {} to the current cell value would result in an overflow.",
+                    by
+                ),
+            )),
+        }
     }
 
     /// Decrements the value of the current cell
     ///
     /// * `by` - This value gets subtracted from the value of the current cell.
     pub fn dec(&mut self, by: u8) -> Result<(), TapeError> {
-        self.data[self.ptr_index] = self.get_current_value()? - by;
-        Ok(())
+        let subbed = self.get_current_value()?.checked_sub(by);
+
+        match subbed {
+            Some(n) => Ok(self.data[self.ptr_index] = n),
+            None => Err(TapeError::new(
+                super::TapeErrorType::OverflowError,
+                format!(
+                    "Subtracting {} from the current cell value would result in an overflow.",
+                    by
+                ),
+            )),
+        }
     }
 
     /// Writes the value of the current cell to stdout.
@@ -337,6 +377,14 @@ mod tests {
     }
 
     #[test]
+    #[should_panic]
+    fn tape_pfw_by_200000_panics_test() {
+        let mut tape = super::Tape::default();
+
+        tape.pfw(200000).unwrap();
+    }
+
+    #[test]
     fn tape_pbw_by_n_equals_current_minus_n_test() {
         let mut tape = super::Tape::default();
 
@@ -368,6 +416,17 @@ mod tests {
 
         tape.inc(100).unwrap();
         let by = 50;
+        tape.dec(by).unwrap();
+        let value_after = tape.get_current_value();
+
+        assert_eq!(value_after.unwrap(), 50);
+    }
+
+    #[test]
+    #[should_panic]
+    fn tape_dec_panics_test() {
+        let mut tape = super::Tape::default();
+        let by = 1;
         tape.dec(by).unwrap();
         let value_after = tape.get_current_value();
 

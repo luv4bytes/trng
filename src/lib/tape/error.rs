@@ -1,15 +1,19 @@
 /// Defines error types for tape errors.
 #[derive(Debug)]
 pub enum TapeErrorType {
-    ArithmeticError,
+    IndexError,
+    OverflowError,
     IoError,
 }
 
 impl std::fmt::Display for TapeErrorType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            TapeErrorType::ArithmeticError => {
-                write!(f, "{}", "Arithmetic error")
+            TapeErrorType::IndexError => {
+                write!(f, "{}", "Index error")
+            }
+            TapeErrorType::OverflowError => {
+                write!(f, "{}", "Overflow error")
             }
             TapeErrorType::IoError => {
                 write!(f, "{}", "IO error")
