@@ -359,7 +359,7 @@ mod tests {
     fn run_file_is_successful_test() {
         let settings = InterpreterSettings::default();
 
-        let f = std::fs::File::open("examples/example.trng");
+        let f = std::fs::File::open("../examples/example.trng");
 
         assert!(!f.is_err());
 

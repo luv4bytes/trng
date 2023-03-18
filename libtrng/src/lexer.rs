@@ -211,7 +211,7 @@ mod tests {
     pub fn tokenize_file_no_error_test() {
         let mut lexer = super::Lexer::new();
 
-        let f = std::fs::File::open("examples/example.trng").unwrap();
+        let f = std::fs::File::open("../examples/example.trng").unwrap();
 
         let tokens = lexer.tokenize(f);
 
