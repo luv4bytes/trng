@@ -99,7 +99,7 @@ impl Lexer {
     }
 
     /// Tokenizes the given file and returns a vector of found tokens.
-    ///
+    /// # Arguments
     /// * `file` - Path of the file that will be tokenized.
     pub fn tokenize<T>(&mut self, read_from: T) -> Result<Vec<Token>, std::io::Error>
     where

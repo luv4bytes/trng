@@ -22,6 +22,9 @@ pub struct InterpreterSettings {
 }
 
 impl InterpreterSettings {
+    /// Creates new settings from the given arguments.
+    /// # Arguments
+    /// * `data_tape_sz` - Size of the data tape.
     pub fn new(data_tape_sz: usize) -> InterpreterSettings {
         InterpreterSettings {
             data_tape_sz: data_tape_sz,

@@ -69,6 +69,7 @@ impl Default for Interpreter {
 
 impl Interpreter {
     /// Constructor for creating a new interpreter.
+    /// # Arguments
     /// * `settings` - Settings for the interpreter.
     pub fn new(settings: &InterpreterSettings) -> Interpreter {
         Interpreter {
@@ -84,6 +85,7 @@ impl Interpreter {
     }
 
     /// Starts the interpreter.
+    /// # Arguments
     /// * `read_from` - Source for TRNG code. Can be anything that implements the `Read` trait.
     pub fn run<T>(&mut self, read_from: T) -> Result<(), InterpreterError>
     where
@@ -278,6 +280,7 @@ impl Interpreter {
 
 /// Expects the given to `Token` to be a `Num` token.
 /// Returns an error if the token is different from what was expected.
+/// # Arguments
 /// * `token` - Option of a token.
 fn expect_num<T>(token: Option<&lexer::Token>) -> Result<T, InterpreterError>
 where
