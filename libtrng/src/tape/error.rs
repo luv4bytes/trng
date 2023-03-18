@@ -1,3 +1,5 @@
+use std::array::TryFromSliceError;
+
 /// Defines error types for tape errors.
 #[derive(Debug)]
 pub enum TapeErrorType {
@@ -41,6 +43,15 @@ impl From<std::io::Error> for TapeError {
         TapeError {
             description: value.to_string(),
             _type: TapeErrorType::IoError,
+        }
+    }
+}
+
+impl From<TryFromSliceError> for TapeError {
+    fn from(value: TryFromSliceError) -> Self {
+        TapeError {
+            description: value.to_string(),
+            _type: TapeErrorType::IndexError,
         }
     }
 }

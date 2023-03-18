@@ -150,8 +150,15 @@ impl Tape {
 
     /// Writes the current cell and the next interpreted as an 16-bit signed integer to stdout.
     pub fn wrti16(&mut self) -> Result<(), TapeError> {
-        let slice = &self.data[self.ptr_index..];
-        let resi16 = slice[1] as i16 | (slice[0] as i16) << 8;
+        let slice = &self.data[self.ptr_index..self.ptr_index + 2];
+
+        let byte_slice = <&[u8; 2]>::try_from(slice);
+        let bytes = match byte_slice {
+            Ok(b) => b,
+            Err(e) => return Err(TapeError::from(e)),
+        };
+
+        let resi16 = i16::from_be_bytes(*bytes);
 
         let s = resi16.to_string();
 
@@ -165,11 +172,15 @@ impl Tape {
 
     /// Writes the current cell and the next three interpreted as an 32-bit signed integer to stdout.
     pub fn wrti32(&mut self) -> Result<(), TapeError> {
-        let slice = &self.data[self.ptr_index..];
-        let resi32 = slice[3] as i32
-            | (slice[2] as i32) << 8
-            | (slice[1] as i32) << 16
-            | (slice[0] as i32) << 24;
+        let slice = &self.data[self.ptr_index..self.ptr_index + 4];
+
+        let byte_slice = <&[u8; 4]>::try_from(slice);
+        let bytes = match byte_slice {
+            Ok(b) => b,
+            Err(e) => return Err(TapeError::from(e)),
+        };
+
+        let resi32 = i32::from_be_bytes(*bytes);
 
         let s = resi32.to_string();
 
@@ -183,15 +194,15 @@ impl Tape {
 
     /// Writes the current cell and the next seven interpreted as an 64-bit signed integer to stdout.
     pub fn wrti64(&mut self) -> Result<(), TapeError> {
-        let slice = &self.data[self.ptr_index..];
-        let resi64 = slice[7] as i64
-            | (slice[6] as i64) << 8
-            | (slice[5] as i64) << 16
-            | (slice[4] as i64) << 24
-            | (slice[3] as i64) << 32
-            | (slice[2] as i64) << 40
-            | (slice[1] as i64) << 48
-            | (slice[0] as i64) << 56;
+        let slice = &self.data[self.ptr_index..self.ptr_index + 8];
+
+        let byte_slice = <&[u8; 8]>::try_from(slice);
+        let bytes = match byte_slice {
+            Ok(b) => b,
+            Err(e) => return Err(TapeError::from(e)),
+        };
+
+        let resi64 = i64::from_be_bytes(*bytes);
 
         let s = resi64.to_string();
 
@@ -218,8 +229,15 @@ impl Tape {
 
     /// Writes the current cell and the next interpreted as an 16-bit unsigned integer to stdout.
     pub fn wrtu16(&mut self) -> Result<(), TapeError> {
-        let slice = &self.data[self.ptr_index..];
-        let resu16 = slice[1] as u16 | (slice[0] as u16) << 8;
+        let slice = &self.data[self.ptr_index..self.ptr_index + 2];
+
+        let byte_slice = <&[u8; 2]>::try_from(slice);
+        let bytes = match byte_slice {
+            Ok(b) => b,
+            Err(e) => return Err(TapeError::from(e)),
+        };
+
+        let resu16 = u16::from_be_bytes(*bytes);
 
         let s = resu16.to_string();
 
@@ -233,11 +251,15 @@ impl Tape {
 
     /// Writes the current cell and the next three interpreted as an 32-bit signed integer to stdout.
     pub fn wrtu32(&mut self) -> Result<(), TapeError> {
-        let slice = &self.data[self.ptr_index..];
-        let resu32 = slice[3] as u32
-            | (slice[2] as u32) << 8
-            | (slice[1] as u32) << 16
-            | (slice[0] as u32) << 24;
+        let slice = &self.data[self.ptr_index..self.ptr_index + 4];
+
+        let byte_slice = <&[u8; 4]>::try_from(slice);
+        let bytes = match byte_slice {
+            Ok(b) => b,
+            Err(e) => return Err(TapeError::from(e)),
+        };
+
+        let resu32 = u32::from_be_bytes(*bytes);
 
         let s = resu32.to_string();
 
@@ -251,17 +273,17 @@ impl Tape {
 
     /// Writes the current cell and the next seven interpreted as an 64-bit unsigned integer to stdout.
     pub fn wrtu64(&mut self) -> Result<(), TapeError> {
-        let slice = &self.data[self.ptr_index..];
-        let resi64 = slice[7] as u64
-            | (slice[6] as u64) << 8
-            | (slice[5] as u64) << 16
-            | (slice[4] as u64) << 24
-            | (slice[3] as u64) << 32
-            | (slice[2] as u64) << 40
-            | (slice[1] as u64) << 48
-            | (slice[0] as u64) << 56;
+        let slice = &self.data[self.ptr_index..self.ptr_index + 8];
 
-        let s = resi64.to_string();
+        let byte_slice = <&[u8; 8]>::try_from(slice);
+        let bytes = match byte_slice {
+            Ok(b) => b,
+            Err(e) => return Err(TapeError::from(e)),
+        };
+
+        let resu64 = u64::from_be_bytes(*bytes);
+
+        let s = resu64.to_string();
 
         let write_res = std::io::stdout().lock().write_all(s.as_bytes());
 
@@ -533,12 +555,14 @@ mod tests {
     #[test]
     fn wrtu32_successful_test() {
         let mut tape = super::Tape::default();
-        tape.inc(16).unwrap();
+        tape.inc(0).unwrap();
         tape.pfw(1).unwrap();
-        tape.inc(16).unwrap();
+        tape.inc(0).unwrap();
         tape.pfw(1).unwrap();
-        tape.inc(16).unwrap();
-        tape.pbw(2).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(1).unwrap();
+        tape.pbw(3).unwrap();
         let res = tape.wrtu32();
 
         assert!(!res.is_err());
