@@ -196,6 +196,20 @@ impl Interpreter {
                         Err(e) => return Err(InterpreterError::from(e)),
                     }
                 }
+                lexer::TokenType::Wrtf32 => {
+                    let wrti_res = self.tape.wrtf32();
+                    match wrti_res {
+                        Ok(_) => (),
+                        Err(e) => return Err(InterpreterError::from(e)),
+                    }
+                }
+                lexer::TokenType::Wrtf64 => {
+                    let wrti_res = self.tape.wrtf64();
+                    match wrti_res {
+                        Ok(_) => (),
+                        Err(e) => return Err(InterpreterError::from(e)),
+                    }
+                }
                 lexer::TokenType::Wrtu64 => {
                     let wrti_res = self.tape.wrtu64();
                     match wrti_res {

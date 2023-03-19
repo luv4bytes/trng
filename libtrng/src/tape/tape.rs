@@ -293,6 +293,50 @@ impl Tape {
         }
     }
 
+    /// Writes the current cell and the next three interpreted as an 32-bit floating point number to stdout.
+    pub fn wrtf32(&mut self) -> Result<(), TapeError> {
+        let slice = &self.data[self.ptr_index..self.ptr_index + 4];
+
+        let byte_slice = <&[u8; 4]>::try_from(slice);
+        let bytes = match byte_slice {
+            Ok(b) => b,
+            Err(e) => return Err(TapeError::from(e)),
+        };
+
+        let resf32 = f32::from_be_bytes(*bytes);
+
+        let s = resf32.to_string();
+
+        let write_res = std::io::stdout().lock().write_all(s.as_bytes());
+
+        match write_res {
+            Ok(_) => Ok(()),
+            Err(e) => Err(TapeError::from(e)),
+        }
+    }
+
+    /// Writes the current cell and the next seven interpreted as an 64-bit floating point number to stdout.
+    pub fn wrtf64(&mut self) -> Result<(), TapeError> {
+        let slice = &self.data[self.ptr_index..self.ptr_index + 8];
+
+        let byte_slice = <&[u8; 8]>::try_from(slice);
+        let bytes = match byte_slice {
+            Ok(b) => b,
+            Err(e) => return Err(TapeError::from(e)),
+        };
+
+        let resf64 = f64::from_be_bytes(*bytes);
+
+        let s = resf64.to_string();
+
+        let write_res = std::io::stdout().lock().write_all(s.as_bytes());
+
+        match write_res {
+            Ok(_) => Ok(()),
+            Err(e) => Err(TapeError::from(e)),
+        }
+    }
+
     /// Reads a character from stdin and stores it in the current cell.
     pub fn rdi(&mut self) -> Result<(), TapeError> {
         let b = std::io::stdin().lock().bytes().next();
@@ -588,6 +632,46 @@ mod tests {
         tape.inc(0).unwrap();
         tape.pbw(7).unwrap();
         let res = tape.wrtu64();
+
+        assert!(!res.is_err());
+    }
+
+    #[test]
+    fn wrtf32_successful_test() {
+        let mut tape = super::Tape::default();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(1).unwrap();
+        tape.pbw(3).unwrap();
+        let res = tape.wrtf32();
+
+        assert!(!res.is_err());
+    }
+
+    #[test]
+    fn wrtf64_successful_test() {
+        let mut tape = super::Tape::default();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(0).unwrap();
+        tape.pfw(1).unwrap();
+        tape.inc(1).unwrap();
+        tape.pbw(7).unwrap();
+        let res = tape.wrtf64();
 
         assert!(!res.is_err());
     }

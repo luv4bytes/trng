@@ -30,49 +30,29 @@ pub struct Lexer {
 
 /// Defines token types.
 pub enum TokenType {
-    /// Move pointer forward.
     Pfw,
-    /// Move pointer back.
     Pbw,
-    /// Increment current cell value.
     Inc,
-    /// Decrement current cell value.
     Dec,
-    /// Numeric literal for incrementation etc.
     Num,
-    /// Read the next byte from stdin.
     Rdi,
-    /// Read all bytes from stdin until LF is encountered.
     Rda,
-    /// Write the current cell value to stdout.
     Wrt,
-    /// Write the value of the current cell as an 8-bit signed integer to stdout.
     Wrti8,
-    /// Writes the current cell and the next interpreted as an 16-bit signed integer to stdout.
     Wrti16,
-    /// Writes the current cell and the next two interpreted as an 32-bit signed integer to stdout.
     Wrti32,
-    /// Writes the current cell and the next seven interpreted as an 64-bit signed integer to stdout.
     Wrti64,
-    /// Write the value of the current cell as an 8-bit unsigned integer to stdout.
     Wrtu8,
-    /// Writes the current cell and the next interpreted as an 16-bit unsigned integer to stdout.
     Wrtu16,
-    /// Writes the current cell and the next two interpreted as an 32-bit unsigned integer to stdout.
     Wrtu32,
-    /// Writes the current cell and the next seven interpreted as an 64-bit unsigned integer to stdout.
     Wrtu64,
-    /// Sets the given value, placing each byte in a separate cell and incrementing the pointer accordingly.
+    Wrtf32,
+    Wrtf64,
     Set,
-    /// Writes all bytes of the given value from the current cell on. The pointer is incremented accordingly.
     Wra,
-    /// Writes a null byte to the current cell and all following cells until a null byte is encountered. The pointer is incremented accordingly.    
     Clr,
-    /// Start of a loop.
     Lop,
-    /// End of a loop.    
     Pol,
-    /// Unknown token.
     Unknown,
 }
 
@@ -178,6 +158,8 @@ impl Lexer {
                 &"wrtu16" => Some(self.token_from_internal(TokenType::Wrtu16)),
                 &"wrtu32" => Some(self.token_from_internal(TokenType::Wrtu32)),
                 &"wrtu64" => Some(self.token_from_internal(TokenType::Wrtu64)),
+                &"wrtf32" => Some(self.token_from_internal(TokenType::Wrtf32)),
+                &"wrtf64" => Some(self.token_from_internal(TokenType::Wrtf64)),
                 &"rdi" => Some(self.token_from_internal(TokenType::Rdi)),
                 &"rda" => Some(self.token_from_internal(TokenType::Rda)),
                 &"set" => Some(self.token_from_internal(TokenType::Set)),

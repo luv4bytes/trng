@@ -22,13 +22,14 @@ It works based on the same principle with a few modifications to make writing pr
 |[set](#set)      |[value]  |Sets the given [value], placing each byte in a separate cell and incrementing the pointer accordingly.
 |[wrt](#wrt)      |         |Write the value of the current cell to the standard output.
 |[wrti8](#wrti)   |         |Write the value of the current cell to the standard output. The value is interpreted as an 8-bit integer in BE byte order. 
-|[wrti16](#wrti)  |         |Write the value of the current cell and the next one together interpreted as an 16-bit integer in BE byte order.
-|[wrti32](#wrti)  |         |Write the value of the current cell and the next one together interpreted as an 32-bit integer in BE byte order.
-|[wrti64](#wrti)  |         |Write the value of the current cell and the next one together interpreted as an 64-bit integer in BE byte order.
+|[wrti16](#wrti)  |         |Write 2 bytes interpreted as an 16-bit integer in BE byte order.
+|[wrti32](#wrti)  |         |Write 4 bytes interpreted as an 32-bit integer in BE byte order.
+|[wrti64](#wrti)  |         |Write 8 bytes interpreted as an 64-bit integer in BE byte order.
 |[wrtu8](#wrtu)   |         |Write the value of the current cell to the standard output. The value is interpreted as an 8-bit unsigned integer in BE byte order. 
-|[wrtu16](#wrtu)  |         |Write the value of the current cell and the next one together interpreted as an 16-bit unsigned integer in BE byte order.
-|[wrtu32](#wrtu)  |         |Write the value of the current cell and the next one together interpreted as an 32-bit unsigned integer in BE byte order.
-|[wrtu64](#wrtu)  |         |Write the value of the current cell and the next one together interpreted as an 64-bit unsigned integer in BE byte order.
+|[wrtu16](#wrtu)  |         |Write 2 bytes interpreted as an 16-bit unsigned integer in BE byte order.
+|[wrtu32](#wrtu)  |         |Write 4 bytes interpreted as an 32-bit unsigned integer in BE byte order.
+|[wrtu64](#wrtu)  |         |Write 8 bytes together interpreted as an 64-bit unsigned integer in BE byte order.
+|[wrtf](#wrtf)    |         |Write 4 or 8 bytes interpreted as a 32/64-bit floating point number in BE byte order.
 |[wra](#wra)      |         |Write all bytes from the current cell on to the standard output until a null byte is encountered.
 |[rdi](#rdi)      |         |Reads the next byte from standard input and stores it in the current cell.
 |[rda](#rda)      |         |Reads all bytes from standard input until LF is encountered and stores them in separate cells.
@@ -152,6 +153,20 @@ Example:
 See [WRTI*](#wrti).
 
 WRTU is the unsigned equivalent.
+
+### WRTF*
+Write 4 or 8 bytes interpreted as a 32/64-bit floating point number in BE byte order.
+
+Syntax:
+    
+    wrtf
+
+Example:
+
+    pfw 3
+    inc 1
+    pbw 3
+    wrtf32
 
 #### RDI
 RDI (read input) is used to read a byte from the standard input and store it in the current cell.
