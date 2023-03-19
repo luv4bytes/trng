@@ -48,9 +48,6 @@ pub struct Interpreter {
     /// The underlying tape.
     tape: tape::Tape,
 
-    /// Stack for looping. Holds instruction indizes.
-    loop_stack: Vec<usize>,
-
     /// The index of the current instruciton.
     instruction_index: usize,
 }
@@ -61,7 +58,6 @@ impl Default for Interpreter {
 
         Self {
             tape: tape::Tape::new(settings.data_tape_sz),
-            loop_stack: vec![],
             instruction_index: 0,
         }
     }
@@ -74,7 +70,6 @@ impl Interpreter {
     pub fn new(settings: &InterpreterSettings) -> Interpreter {
         Interpreter {
             tape: tape::Tape::new(settings.data_tape_sz),
-            loop_stack: vec![],
             instruction_index: 0,
         }
     }
@@ -261,14 +256,6 @@ impl Interpreter {
                         Ok(_) => (),
                         Err(e) => return Err(InterpreterError::from(e)),
                     }
-                }
-                lexer::TokenType::Lop => {
-                    todo!()
-                    // TODO:
-                }
-                lexer::TokenType::Pol => {
-                    todo!()
-                    // TODO:
                 }
                 lexer::TokenType::Unknown => {
                     return Err(InterpreterError {

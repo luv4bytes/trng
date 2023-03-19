@@ -655,7 +655,7 @@ mod tests {
     #[test]
     fn wrtf64_successful_test() {
         let mut tape = super::Tape::default();
-        tape.inc(0).unwrap();
+        tape.inc(255).unwrap();
         tape.pfw(1).unwrap();
         tape.inc(0).unwrap();
         tape.pfw(1).unwrap();
@@ -667,9 +667,9 @@ mod tests {
         tape.pfw(1).unwrap();
         tape.inc(0).unwrap();
         tape.pfw(1).unwrap();
-        tape.inc(0).unwrap();
+        tape.inc(255).unwrap();
         tape.pfw(1).unwrap();
-        tape.inc(1).unwrap();
+        tape.inc(255).unwrap();
         tape.pbw(7).unwrap();
         let res = tape.wrtf64();
 

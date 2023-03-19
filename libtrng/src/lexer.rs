@@ -51,8 +51,6 @@ pub enum TokenType {
     Set,
     Wra,
     Clr,
-    Lop,
-    Pol,
     Unknown,
 }
 
@@ -165,8 +163,6 @@ impl Lexer {
                 &"set" => Some(self.token_from_internal(TokenType::Set)),
                 &"wra" => Some(self.token_from_internal(TokenType::Wra)),
                 &"clr" => Some(self.token_from_internal(TokenType::Clr)),
-                &"lop" => Some(self.token_from_internal(TokenType::Lop)),
-                &"pol" => Some(self.token_from_internal(TokenType::Pol)),
                 &_ => Some(self.token_from_internal(TokenType::Unknown)),
             };
         } else if (*first_byte as char).is_numeric() {
