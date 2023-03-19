@@ -71,6 +71,12 @@ impl Interpreter {
         }
     }
 
+    /// Resets the interpreter. This resets the tape and sets all indizes to 0.
+    pub fn reset(&mut self) {
+        self.tape.reset();
+        self.instruction_index = 0;
+    }
+
     /// Returns a reference to the data that is stored on the current tape.
     pub fn get_data(&self) -> &Vec<u8> {
         &self.tape.data
@@ -360,5 +366,21 @@ mod tests {
         let run_result = interpreter.run(f.unwrap());
 
         assert!(!run_result.is_err());
+    }
+
+    #[test]
+    fn reset_is_successful_test() {
+        let f = std::fs::File::open("../examples/example.trng");
+
+        assert!(!f.is_err());
+
+        let mut interpreter = super::Interpreter::default();
+        let run_result = interpreter.run(f.unwrap());
+
+        assert!(!run_result.is_err());
+
+        interpreter.reset();
+
+        assert_eq!(interpreter.get_data()[0], 0)
     }
 }

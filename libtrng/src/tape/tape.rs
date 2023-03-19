@@ -46,6 +46,14 @@ impl Tape {
         }
     }
 
+    /// Resets all cells of the tape to 0.
+    pub fn reset(&mut self) {
+        for c in &mut self.data {
+            *c = 0;
+        }
+        self.ptr_index = 0;
+    }
+
     /// Gets the value of the current cell.
     pub fn get_current_value(&mut self) -> Result<u8, TapeError> {
         Ok(self.data[self.ptr_index])
@@ -717,6 +725,18 @@ mod tests {
         tape.clr().unwrap();
 
         assert_eq!(tape.get_current_value().unwrap(), 0)
+    }
+
+    #[test]
+    fn reset_successful_test() {
+        let mut tape = super::Tape::default();
+
+        tape.set("Hellooooooooooooooooooooooooooooooooooo!")
+            .unwrap();
+
+        tape.reset();
+
+        assert_eq!(tape.get_current_value().unwrap(), 0);
     }
 
     #[allow(dead_code)]
