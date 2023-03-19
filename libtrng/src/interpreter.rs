@@ -16,7 +16,6 @@
 
 use crate::{
     lexer,
-    settings::InterpreterSettings,
     tape::{self, TapeError},
 };
 use std::io::Read;
@@ -54,10 +53,8 @@ pub struct Interpreter {
 
 impl Default for Interpreter {
     fn default() -> Self {
-        let settings = InterpreterSettings::default();
-
         Self {
-            tape: tape::Tape::new(settings.data_tape_sz),
+            tape: tape::Tape::new(30000),
             instruction_index: 0,
         }
     }
@@ -66,10 +63,10 @@ impl Default for Interpreter {
 impl Interpreter {
     /// Constructor for creating a new interpreter.
     /// # Arguments
-    /// * `settings` - Settings for the interpreter.
-    pub fn new(settings: &InterpreterSettings) -> Interpreter {
+    /// * `data_tape_sz` - Size of the underlying tape.
+    pub fn new(data_tape_sz: usize) -> Interpreter {
         Interpreter {
-            tape: tape::Tape::new(settings.data_tape_sz),
+            tape: tape::Tape::new(data_tape_sz),
             instruction_index: 0,
         }
     }
@@ -314,7 +311,6 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::settings::InterpreterSettings;
     use std::io::BufReader;
 
     #[test]
@@ -333,9 +329,8 @@ mod tests {
             wrt
             ";
 
-        let settings = InterpreterSettings::default();
         let reader = BufReader::new(code.as_bytes());
-        let mut interpreter = super::Interpreter::new(&settings);
+        let mut interpreter = super::Interpreter::default();
         let run_result = interpreter.run(reader);
 
         assert!(!run_result.is_err());
@@ -348,9 +343,8 @@ mod tests {
             pbw 5
             wra";
 
-        let settings = InterpreterSettings::default();
         let reader = BufReader::new(code.as_bytes());
-        let mut interpreter = super::Interpreter::new(&settings);
+        let mut interpreter = super::Interpreter::default();
         let run_result = interpreter.run(reader);
 
         assert!(!run_result.is_err());
@@ -358,13 +352,11 @@ mod tests {
 
     #[test]
     fn run_file_is_successful_test() {
-        let settings = InterpreterSettings::default();
-
         let f = std::fs::File::open("../examples/example.trng");
 
         assert!(!f.is_err());
 
-        let mut interpreter = super::Interpreter::new(&settings);
+        let mut interpreter = super::Interpreter::default();
         let run_result = interpreter.run(f.unwrap());
 
         assert!(!run_result.is_err());

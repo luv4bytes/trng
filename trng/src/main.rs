@@ -24,13 +24,16 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use libtrng::Interpreter;
 use tui::{backend::CrosstermBackend, Terminal};
 
 fn main() -> Result<(), std::io::Error> {
     let mut terminal = create_terminal()?;
+    let interpreter = Interpreter::default();
+    let ui = ui::Ui::new(&interpreter);
 
     loop {
-        ui::draw_ui(&mut terminal)?;
+        ui.draw_ui(&mut terminal)?;
 
         if let Event::Key(key) = event::read()? {
             if let KeyCode::Char('q') = key.code {
