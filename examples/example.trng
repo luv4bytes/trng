@@ -1,2 +1,18 @@
 set Hello
+pbw 5
+wra
+pbw 5
+clr
+pbw 5
+inc 32
+wrt
+dec 32
+set World
+pbw 5
+wra
+pbw 5
+clr
+inc 13
+wrt
+dec 3
 wrt
