@@ -1,6 +1,5 @@
 [workspace]
 
 members = [
-    "trng",
-    "libtrng"
+    "trng"
 ]
