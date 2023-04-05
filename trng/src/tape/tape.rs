@@ -56,8 +56,18 @@ impl Tape {
 
     /// Gets the value of the current cell.
     pub fn get_current_value(&mut self) -> Result<u8, TapeError> {
-        // TODO: Error handling
-        Ok(self.data[self.ptr_index])
+        let cur = self.data.get(self.ptr_index);
+
+        match cur {
+            Some(val) => Ok(*val),
+            None => Err(TapeError::new(
+                super::TapeErrorType::IndexError,
+                format!(
+                    "Getting the current value at pointer index {} is invalid.",
+                    self.ptr_index
+                ),
+            )),
+        }
     }
 
     /// Moves the pointer (read/write head) forward.
