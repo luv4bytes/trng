@@ -1,6 +1,7 @@
-# TRNG - Brainfucks pretty sister.
+# TRNG - Brainfucks pretty sister
 
 ## What is TRNG?
+
 TRNG is a very close relative of [Brainfuck](https://en.wikipedia.org/wiki/Brainfuck). Meaning it works based on the same principles as Brainfuck but with a lot more instructions and features to make writing programs a bit more understandable.
 
 The TRNG interpreter is written in [Rust](https://www.rust-lang.org/).
