@@ -1,4 +1,5 @@
 inc 10
 lop
-dec 1
+    dec 1
 pol
+inc 20
