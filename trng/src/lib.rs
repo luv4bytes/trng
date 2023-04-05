@@ -17,6 +17,9 @@
 mod interpreter;
 mod lexer;
 mod tape;
+mod translator;
 
 pub use interpreter::Interpreter;
 pub use interpreter::InterpreterError;
+
+// TODO: Publish translator.

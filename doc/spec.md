@@ -3,11 +3,11 @@
 TRNG is a very close relative to Brainfuck.
 It works based on the same principle with a few modifications to make writing programs a bit less fucky.
 
-# Table of Contents
-
 1. [Instruction codes](#instruction-codes)  
     1.1 [Cell instructions](#cell-instructions)
+
     1.2 [I/O instructions](#io-instructions)
+
     1.3 [Loops](#loops)
 
 ## Instruction codes
@@ -96,6 +96,24 @@ Example:
 
     dec 10
 
+#### SET
+
+SET (set following value) is used to set the following consecutive value. This means that the bytes of the passed value will be stored each byte a cell. The pointer will be set accordingly.
+
+Syntax:
+
+    set [value]
+
+Example:
+
+    set Hello
+    pfw 1
+    inc 32
+    pfw 1
+    set World
+
+### Loops
+
 #### LOP
 
 LOP (start loop) is used to start a loop. (while loop)
@@ -120,22 +138,6 @@ Example:
 POL (end loop) ends the current while loop if the value of the current cell is 0.
 
 (s. [lop](#lop))
-
-#### SET
-
-SET (set following value) is used to set the following consecutive value. This means that the bytes of the passed value will be stored each byte a cell. The pointer will be set accordingly.
-
-Syntax:
-
-    set [value]
-
-Example:
-
-    set Hello
-    pfw 1
-    inc 32
-    pfw 1
-    set World
 
 ### I/O instructions
 

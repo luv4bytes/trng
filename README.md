@@ -6,6 +6,10 @@ TRNG is a very close relative of [Brainfuck](https://en.wikipedia.org/wiki/Brain
 
 The TRNG interpreter is written in [Rust](https://www.rust-lang.org/).
 
+## Specification
+
+For further information about all instructions please read [the language specification](./doc/spec.md).
+
 ## Examples
 
 The following demonstrates a simple "Hello World" program written in TRNG.

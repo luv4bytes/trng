@@ -4,4 +4,4 @@ version = "0.1.0"
 edition = "2021"
 authors = ["Lukas Pfeifer"]
 description = "The TRNG interpreter library."
-keywords = ["trng", "brainfuck", "turing"]
+keywords = ["trng", "brainfuck"]
