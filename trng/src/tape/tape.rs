@@ -56,6 +56,7 @@ impl Tape {
 
     /// Gets the value of the current cell.
     pub fn get_current_value(&mut self) -> Result<u8, TapeError> {
+        // TODO: Error handling
         Ok(self.data[self.ptr_index])
     }
 

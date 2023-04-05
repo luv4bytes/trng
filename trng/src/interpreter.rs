@@ -49,6 +49,8 @@ pub struct Interpreter {
 
     /// The index of the current instruciton.
     instruction_index: usize,
+
+    loop_stack: Vec<usize>,
 }
 
 impl Default for Interpreter {
@@ -56,6 +58,7 @@ impl Default for Interpreter {
         Self {
             tape: tape::Tape::new(30000),
             instruction_index: 0,
+            loop_stack: vec![],
         }
     }
 }
@@ -68,6 +71,7 @@ impl Interpreter {
         Interpreter {
             tape: tape::Tape::new(data_tape_sz),
             instruction_index: 0,
+            loop_stack: vec![],
         }
     }
 
@@ -75,6 +79,7 @@ impl Interpreter {
     pub fn reset(&mut self) {
         self.tape.reset();
         self.instruction_index = 0;
+        self.loop_stack = vec![];
     }
 
     /// Returns a reference to the data that is stored on the current tape.
@@ -106,36 +111,69 @@ impl Interpreter {
             }
         }
 
-        let mut token_iter = tokens.iter();
-
-        while let Some(token) = token_iter.next() {
+        let mut i = 0;
+        while let Some(token) = tokens.get(i) {
+            self.instruction_index = i;
             match token._type {
                 lexer::TokenType::Pfw => {
-                    let steps = expect_num::<usize>(token_iter.next())?;
+                    i += 1;
+                    let steps = expect_num::<usize>(tokens.get(i))?;
                     match self.tape.pfw(steps) {
                         Ok(_) => (),
                         Err(e) => return Err(InterpreterError::from(e)),
                     }
                 }
                 lexer::TokenType::Pbw => {
-                    let steps = expect_num::<usize>(token_iter.next())?;
+                    i += 1;
+                    let steps = expect_num::<usize>(tokens.get(i))?;
                     match self.tape.pbw(steps) {
                         Ok(_) => (),
                         Err(e) => return Err(InterpreterError::from(e)),
                     }
                 }
                 lexer::TokenType::Inc => {
-                    let by = expect_num::<u8>(token_iter.next())?;
+                    i += 1;
+                    let by = expect_num::<u8>(tokens.get(i))?;
                     match self.tape.inc(by) {
                         Ok(_) => (),
                         Err(e) => return Err(InterpreterError::from(e)),
                     }
                 }
                 lexer::TokenType::Dec => {
-                    let by = expect_num::<u8>(token_iter.next())?;
+                    i += 1;
+                    let by = expect_num::<u8>(tokens.get(i))?;
                     match self.tape.dec(by) {
                         Ok(_) => (),
                         Err(e) => return Err(InterpreterError::from(e)),
+                    }
+                }
+                lexer::TokenType::Lop => {
+                    self.loop_stack.push(self.instruction_index);
+                }
+                lexer::TokenType::Pol => {
+                    let last = self.loop_stack.last();
+                    match last {
+                        Some(index) => {
+                            let cur = self.tape.get_current_value();
+                            match cur {
+                                Ok(val) => {
+                                    if val == 0 {
+                                        self.loop_stack.pop(); // Index was valid and we don't need it any longer.
+                                        i += 1;
+                                        continue;
+                                    }
+                                }
+                                Err(e) => return Err(InterpreterError::from(e)),
+                            }
+
+                            i = *index;
+                        }
+                        None => {
+                            return Err(InterpreterError {
+                                description: "Expected an index on the loop stack. Found nothing."
+                                    .to_string(),
+                            })
+                        }
                     }
                 }
                 lexer::TokenType::Wrt => {
@@ -223,7 +261,8 @@ impl Interpreter {
                     }
                 }
                 lexer::TokenType::Set => {
-                    let value = token_iter.next();
+                    i += 1;
+                    let value = tokens.get(i);
                     match value {
                         Some(t) => {
                             let set_res = self.tape.set(&t.value);
@@ -275,7 +314,7 @@ impl Interpreter {
                 }
             }
 
-            self.instruction_index += 1;
+            i += 1;
         }
 
         Ok(())
@@ -359,6 +398,18 @@ mod tests {
     #[test]
     fn run_file_is_successful_test() {
         let f = std::fs::File::open("../examples/example.trng");
+
+        assert!(!f.is_err());
+
+        let mut interpreter = super::Interpreter::default();
+        let run_result = interpreter.run(f.unwrap());
+
+        assert!(!run_result.is_err());
+    }
+
+    #[test]
+    fn run_loop_example_successful_test() {
+        let f = std::fs::File::open("../examples/loop.trng");
 
         assert!(!f.is_err());
 
