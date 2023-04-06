@@ -39,8 +39,8 @@ impl Tape {
     /// The data band will have data_band_sz cells.
     ///
     /// * `data_band_sz` - The number of cells on the data band.
-    pub fn new(data_band_sz: usize) -> Tape {
-        Tape {
+    pub fn new(data_band_sz: usize) -> Self {
+        Self {
             data: vec![0; data_band_sz],
             ptr_index: 0,
         }

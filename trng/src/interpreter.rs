@@ -67,8 +67,8 @@ impl Interpreter {
     /// Constructor for creating a new interpreter.
     /// # Arguments
     /// * `data_tape_sz` - Size of the underlying tape.
-    pub fn new(data_tape_sz: usize) -> Interpreter {
-        Interpreter {
+    pub fn new(data_tape_sz: usize) -> Self {
+        Self {
             tape: tape::Tape::new(data_tape_sz),
             instruction_index: 0,
             loop_stack: vec![],
