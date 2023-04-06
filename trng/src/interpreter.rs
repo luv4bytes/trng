@@ -118,33 +118,29 @@ impl Interpreter {
                 lexer::TokenType::Pfw => {
                     i += 1;
                     let steps = expect_num::<usize>(tokens.get(i))?;
-                    match self.tape.pfw(steps) {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.pfw(steps) {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Pbw => {
                     i += 1;
                     let steps = expect_num::<usize>(tokens.get(i))?;
-                    match self.tape.pbw(steps) {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.pbw(steps) {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Inc => {
                     i += 1;
                     let by = expect_num::<u8>(tokens.get(i))?;
-                    match self.tape.inc(by) {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.inc(by) {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Dec => {
                     i += 1;
                     let by = expect_num::<u8>(tokens.get(i))?;
-                    match self.tape.dec(by) {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.dec(by) {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Lop => {
@@ -177,87 +173,63 @@ impl Interpreter {
                     }
                 }
                 lexer::TokenType::Wrt => {
-                    let wrt_res = self.tape.wrt();
-                    match wrt_res {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.wrt() {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Wrti8 => {
-                    let wrti_res = self.tape.wrti8();
-                    match wrti_res {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.wrti8() {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Wrti16 => {
-                    let wrti_res = self.tape.wrti16();
-                    match wrti_res {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.wrti16() {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Wrti32 => {
-                    let wrti_res = self.tape.wrti32();
-                    match wrti_res {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.wrti32() {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Wrti64 => {
-                    let wrti_res = self.tape.wrti64();
-                    match wrti_res {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.wrti64() {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Wrtu8 => {
-                    let wrti_res = self.tape.wrtu8();
-                    match wrti_res {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.wrtu8() {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Wrtu16 => {
-                    let wrti_res = self.tape.wrtu16();
-                    match wrti_res {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.wrtu16() {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Wrtu32 => {
-                    let wrti_res = self.tape.wrtu32();
-                    match wrti_res {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
-                    }
-                }
-                lexer::TokenType::Wrtf32 => {
-                    let wrti_res = self.tape.wrtf32();
-                    match wrti_res {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
-                    }
-                }
-                lexer::TokenType::Wrtf64 => {
-                    let wrti_res = self.tape.wrtf64();
-                    match wrti_res {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.wrtu32() {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Wrtu64 => {
-                    let wrti_res = self.tape.wrtu64();
-                    match wrti_res {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.wrtu64() {
+                        return Err(InterpreterError::from(e));
+                    }
+                }
+                lexer::TokenType::Wrtf32 => {
+                    if let Err(e) = self.tape.wrtf32() {
+                        return Err(InterpreterError::from(e));
+                    }
+                }
+                lexer::TokenType::Wrtf64 => {
+                    if let Err(e) = self.tape.wrtf64() {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Rdi => {
-                    let rdi_res = self.tape.rdi();
-                    match rdi_res {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.rdi() {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Set => {
@@ -279,24 +251,18 @@ impl Interpreter {
                     }
                 }
                 lexer::TokenType::Wra => {
-                    let wra_res = self.tape.wra();
-                    match wra_res {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.wra() {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Rda => {
-                    let rda_res = self.tape.rda();
-                    match rda_res {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.rda() {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Clr => {
-                    let clr_res = self.tape.clr();
-                    match clr_res {
-                        Ok(_) => (),
-                        Err(e) => return Err(InterpreterError::from(e)),
+                    if let Err(e) = self.tape.clr() {
+                        return Err(InterpreterError::from(e));
                     }
                 }
                 lexer::TokenType::Unknown => {
