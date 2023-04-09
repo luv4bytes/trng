@@ -20,6 +20,9 @@ use crate::{
 };
 use std::io::Read;
 
+/// Type alias for a simple result with an InterpreterError.
+pub type InterpreterResult<T> = Result<T, InterpreterError>;
+
 /// Defines an error that occurs during runtime.
 #[derive(Debug)]
 pub struct InterpreterError {
@@ -90,7 +93,7 @@ impl Interpreter {
     /// Starts the interpreter.
     /// # Arguments
     /// * `read_from` - Source for TRNG code. Can be anything that implements the `Read` trait.
-    pub fn run<T>(&mut self, read_from: T) -> Result<(), InterpreterError>
+    pub fn run<T>(&mut self, read_from: T) -> InterpreterResult<()>
     where
         T: Read,
     {
@@ -291,7 +294,7 @@ impl Interpreter {
 /// Returns an error if the token is different from what was expected.
 /// # Arguments
 /// * `token` - Option of a token.
-fn expect_num<T>(token: Option<&lexer::Token>) -> Result<T, InterpreterError>
+fn expect_num<T>(token: Option<&lexer::Token>) -> InterpreterResult<T>
 where
     T: std::str::FromStr,
     T::Err: std::fmt::Display,

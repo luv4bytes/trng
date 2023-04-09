@@ -18,6 +18,9 @@ use std::io::{Read, Write};
 
 use super::TapeError;
 
+/// Type alias for a simple result with a TapeError.
+pub type TapeResult<T> = Result<T, TapeError>;
+
 /// Simulates the tape for TRNG.
 pub struct Tape {
     pub data: Vec<u8>,
@@ -55,7 +58,7 @@ impl Tape {
     }
 
     /// Gets the value of the current cell.
-    pub fn get_current_value(&mut self) -> Result<u8, TapeError> {
+    pub fn get_current_value(&mut self) -> TapeResult<u8> {
         let cur = self.data.get(self.ptr_index);
 
         match cur {
@@ -73,7 +76,7 @@ impl Tape {
     /// Moves the pointer (read/write head) forward.
     ///
     /// * `steps` - The number of steps to move forward on the tape.
-    pub fn pfw(&mut self, steps: usize) -> Result<(), TapeError> {
+    pub fn pfw(&mut self, steps: usize) -> TapeResult<()> {
         if self.ptr_index + steps >= self.data.capacity() {
             return Err(TapeError::new(
                 super::TapeErrorType::IndexError,
@@ -91,7 +94,7 @@ impl Tape {
     /// Moves the pointer (read/write head) backward.
     ///
     /// * `steps` - The number of steps to move backward on the tape.
-    pub fn pbw(&mut self, steps: usize) -> Result<(), TapeError> {
+    pub fn pbw(&mut self, steps: usize) -> TapeResult<()> {
         let subbed = self.ptr_index.checked_sub(steps);
 
         match subbed {
@@ -109,7 +112,7 @@ impl Tape {
     /// Increments the value of the current cell
     ///
     /// * `by` - This value gets added to the value of the current cell.
-    pub fn inc(&mut self, by: u8) -> Result<(), TapeError> {
+    pub fn inc(&mut self, by: u8) -> TapeResult<()> {
         let added = self.get_current_value()?.checked_add(by);
 
         match added {
@@ -127,7 +130,7 @@ impl Tape {
     /// Decrements the value of the current cell
     ///
     /// * `by` - This value gets subtracted from the value of the current cell.
-    pub fn dec(&mut self, by: u8) -> Result<(), TapeError> {
+    pub fn dec(&mut self, by: u8) -> TapeResult<()> {
         let subbed = self.get_current_value()?.checked_sub(by);
 
         match subbed {
@@ -143,7 +146,7 @@ impl Tape {
     }
 
     /// Writes the value of the current cell to stdout.
-    pub fn wrt(&mut self) -> Result<(), TapeError> {
+    pub fn wrt(&mut self) -> TapeResult<()> {
         let write_res = std::io::stdout()
             .lock()
             .write_all(&[self.get_current_value()?]);
@@ -155,7 +158,7 @@ impl Tape {
     }
 
     /// Writes the value of the current cell as an 8-bit signed integer to stdout.
-    pub fn wrti8(&mut self) -> Result<(), TapeError> {
+    pub fn wrti8(&mut self) -> TapeResult<()> {
         let b = self.get_current_value()? as i8;
         let i = b.to_string();
 
@@ -168,7 +171,7 @@ impl Tape {
     }
 
     /// Writes the current cell and the next interpreted as an 16-bit signed integer to stdout.
-    pub fn wrti16(&mut self) -> Result<(), TapeError> {
+    pub fn wrti16(&mut self) -> TapeResult<()> {
         let slice = &self.data[self.ptr_index..self.ptr_index + 2];
 
         let byte_slice = <&[u8; 2]>::try_from(slice);
@@ -190,7 +193,7 @@ impl Tape {
     }
 
     /// Writes the current cell and the next three interpreted as an 32-bit signed integer to stdout.
-    pub fn wrti32(&mut self) -> Result<(), TapeError> {
+    pub fn wrti32(&mut self) -> TapeResult<()> {
         let slice = &self.data[self.ptr_index..self.ptr_index + 4];
 
         let byte_slice = <&[u8; 4]>::try_from(slice);
@@ -212,7 +215,7 @@ impl Tape {
     }
 
     /// Writes the current cell and the next seven interpreted as an 64-bit signed integer to stdout.
-    pub fn wrti64(&mut self) -> Result<(), TapeError> {
+    pub fn wrti64(&mut self) -> TapeResult<()> {
         let slice = &self.data[self.ptr_index..self.ptr_index + 8];
 
         let byte_slice = <&[u8; 8]>::try_from(slice);
@@ -234,7 +237,7 @@ impl Tape {
     }
 
     /// Writes the value of the current cell as an 8-bit unsigned integer to stdout.
-    pub fn wrtu8(&mut self) -> Result<(), TapeError> {
+    pub fn wrtu8(&mut self) -> TapeResult<()> {
         let b = self.get_current_value()?;
         let i = b.to_string();
 
@@ -247,7 +250,7 @@ impl Tape {
     }
 
     /// Writes the current cell and the next interpreted as an 16-bit unsigned integer to stdout.
-    pub fn wrtu16(&mut self) -> Result<(), TapeError> {
+    pub fn wrtu16(&mut self) -> TapeResult<()> {
         let slice = &self.data[self.ptr_index..self.ptr_index + 2];
 
         let byte_slice = <&[u8; 2]>::try_from(slice);
@@ -269,7 +272,7 @@ impl Tape {
     }
 
     /// Writes the current cell and the next three interpreted as an 32-bit signed integer to stdout.
-    pub fn wrtu32(&mut self) -> Result<(), TapeError> {
+    pub fn wrtu32(&mut self) -> TapeResult<()> {
         let slice = &self.data[self.ptr_index..self.ptr_index + 4];
 
         let byte_slice = <&[u8; 4]>::try_from(slice);
@@ -291,7 +294,7 @@ impl Tape {
     }
 
     /// Writes the current cell and the next seven interpreted as an 64-bit unsigned integer to stdout.
-    pub fn wrtu64(&mut self) -> Result<(), TapeError> {
+    pub fn wrtu64(&mut self) -> TapeResult<()> {
         let slice = &self.data[self.ptr_index..self.ptr_index + 8];
 
         let byte_slice = <&[u8; 8]>::try_from(slice);
@@ -313,7 +316,7 @@ impl Tape {
     }
 
     /// Writes the current cell and the next three interpreted as an 32-bit floating point number to stdout.
-    pub fn wrtf32(&mut self) -> Result<(), TapeError> {
+    pub fn wrtf32(&mut self) -> TapeResult<()> {
         let slice = &self.data[self.ptr_index..self.ptr_index + 4];
 
         let byte_slice = <&[u8; 4]>::try_from(slice);
@@ -335,7 +338,7 @@ impl Tape {
     }
 
     /// Writes the current cell and the next seven interpreted as an 64-bit floating point number to stdout.
-    pub fn wrtf64(&mut self) -> Result<(), TapeError> {
+    pub fn wrtf64(&mut self) -> TapeResult<()> {
         let slice = &self.data[self.ptr_index..self.ptr_index + 8];
 
         let byte_slice = <&[u8; 8]>::try_from(slice);
@@ -357,7 +360,7 @@ impl Tape {
     }
 
     /// Reads a character from stdin and stores it in the current cell.
-    pub fn rdi(&mut self) -> Result<(), TapeError> {
+    pub fn rdi(&mut self) -> TapeResult<()> {
         let b = std::io::stdin().lock().bytes().next();
         match b {
             Some(res) => match res {
@@ -370,7 +373,7 @@ impl Tape {
 
     /// Sets the given value, placing each byte in a separate cell and incrementing the pointer accordingly.
     /// * `v` - The value to set.
-    pub fn set(&mut self, v: &str) -> Result<(), TapeError> {
+    pub fn set(&mut self, v: &str) -> TapeResult<()> {
         for b in v.as_bytes() {
             self.data[self.ptr_index] = *b;
             self.ptr_index += 1;
@@ -381,7 +384,7 @@ impl Tape {
 
     /// Writes the current cell and all following cells to stdout until a null byte is encountered.
     /// The pointer is incremented accordingly.
-    pub fn wra(&mut self) -> Result<(), TapeError> {
+    pub fn wra(&mut self) -> TapeResult<()> {
         loop {
             let b = self.get_current_value()?;
 
@@ -402,7 +405,7 @@ impl Tape {
 
     /// Reads all bytes from stdin until LF is encountered.
     /// The pointer is incremented accordingly.
-    pub fn rda(&mut self) -> Result<(), TapeError> {
+    pub fn rda(&mut self) -> TapeResult<()> {
         for b in std::io::stdin().lock().bytes() {
             match b {
                 Ok(byte) => {
@@ -422,7 +425,7 @@ impl Tape {
 
     /// Writes a null byte to the current cell and all following cells until a null byte is encountered.
     /// The pointer is incremented accordingly.
-    pub fn clr(&mut self) -> Result<(), TapeError> {
+    pub fn clr(&mut self) -> TapeResult<()> {
         self.store(0)?;
         loop {
             self.step_fw()?;
@@ -439,7 +442,7 @@ impl Tape {
         Ok(())
     }
 
-    fn step_fw(&mut self) -> Result<(), TapeError> {
+    fn step_fw(&mut self) -> TapeResult<()> {
         let moved = self.ptr_index.checked_add(1);
         match moved {
             Some(n) => Ok(self.ptr_index = n),
@@ -451,7 +454,7 @@ impl Tape {
         }
     }
 
-    fn store(&mut self, byte: u8) -> Result<(), TapeError> {
+    fn store(&mut self, byte: u8) -> TapeResult<()> {
         self.data[self.ptr_index] = byte;
         Ok(())
     }

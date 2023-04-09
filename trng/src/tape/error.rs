@@ -40,7 +40,7 @@ impl std::error::Error for TapeError {}
 
 impl From<std::io::Error> for TapeError {
     fn from(value: std::io::Error) -> Self {
-        TapeError {
+        Self {
             description: value.to_string(),
             _type: TapeErrorType::IoError,
         }
@@ -49,7 +49,7 @@ impl From<std::io::Error> for TapeError {
 
 impl From<TryFromSliceError> for TapeError {
     fn from(value: TryFromSliceError) -> Self {
-        TapeError {
+        Self {
             description: value.to_string(),
             _type: TapeErrorType::IndexError,
         }
@@ -58,7 +58,7 @@ impl From<TryFromSliceError> for TapeError {
 
 impl TapeError {
     pub fn new(_type: TapeErrorType, description: String) -> TapeError {
-        TapeError {
+        Self {
             _type: _type,
             description: description,
         }

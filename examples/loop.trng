@@ -1,5 +1,5 @@
 inc 10
 lop
+    wrti8
     dec 1
 pol
-inc 20
