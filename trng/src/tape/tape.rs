@@ -147,14 +147,14 @@ impl Tape {
 
     /// Writes the value of the current cell to stdout.
     pub fn wrt(&mut self) -> TapeResult<()> {
-        let write_res = std::io::stdout()
+        if let Err(e) = std::io::stdout()
             .lock()
-            .write_all(&[self.get_current_value()?]);
-
-        match write_res {
-            Ok(_) => Ok(()),
-            Err(e) => Err(TapeError::from(e)),
+            .write_all(&[self.get_current_value()?])
+        {
+            return Err(TapeError::from(e));
         }
+
+        Ok(())
     }
 
     /// Writes the value of the current cell as an 8-bit signed integer to stdout.
@@ -162,12 +162,11 @@ impl Tape {
         let b = self.get_current_value()? as i8;
         let i = b.to_string();
 
-        let write_res = std::io::stdout().lock().write_all(i.as_bytes());
-
-        match write_res {
-            Ok(_) => Ok(()),
-            Err(e) => Err(TapeError::from(e)),
+        if let Err(e) = std::io::stdout().lock().write_all(i.as_bytes()) {
+            return Err(TapeError::from(e));
         }
+
+        Ok(())
     }
 
     /// Writes the current cell and the next interpreted as an 16-bit signed integer to stdout.
@@ -184,12 +183,11 @@ impl Tape {
 
         let s = resi16.to_string();
 
-        let write_res = std::io::stdout().lock().write_all(s.as_bytes());
-
-        match write_res {
-            Ok(_) => Ok(()),
-            Err(e) => Err(TapeError::from(e)),
+        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
+            return Err(TapeError::from(e));
         }
+
+        Ok(())
     }
 
     /// Writes the current cell and the next three interpreted as an 32-bit signed integer to stdout.
@@ -206,12 +204,11 @@ impl Tape {
 
         let s = resi32.to_string();
 
-        let write_res = std::io::stdout().lock().write_all(s.as_bytes());
-
-        match write_res {
-            Ok(_) => Ok(()),
-            Err(e) => Err(TapeError::from(e)),
+        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
+            return Err(TapeError::from(e));
         }
+
+        Ok(())
     }
 
     /// Writes the current cell and the next seven interpreted as an 64-bit signed integer to stdout.
@@ -228,25 +225,23 @@ impl Tape {
 
         let s = resi64.to_string();
 
-        let write_res = std::io::stdout().lock().write_all(s.as_bytes());
-
-        match write_res {
-            Ok(_) => Ok(()),
-            Err(e) => Err(TapeError::from(e)),
+        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
+            return Err(TapeError::from(e));
         }
+
+        Ok(())
     }
 
     /// Writes the value of the current cell as an 8-bit unsigned integer to stdout.
     pub fn wrtu8(&mut self) -> TapeResult<()> {
         let b = self.get_current_value()?;
-        let i = b.to_string();
+        let s = b.to_string();
 
-        let write_res = std::io::stdout().lock().write_all(i.as_bytes());
-
-        match write_res {
-            Ok(_) => Ok(()),
-            Err(e) => Err(TapeError::from(e)),
+        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
+            return Err(TapeError::from(e));
         }
+
+        Ok(())
     }
 
     /// Writes the current cell and the next interpreted as an 16-bit unsigned integer to stdout.
@@ -263,12 +258,11 @@ impl Tape {
 
         let s = resu16.to_string();
 
-        let write_res = std::io::stdout().lock().write_all(s.as_bytes());
-
-        match write_res {
-            Ok(_) => Ok(()),
-            Err(e) => Err(TapeError::from(e)),
+        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
+            return Err(TapeError::from(e));
         }
+
+        Ok(())
     }
 
     /// Writes the current cell and the next three interpreted as an 32-bit signed integer to stdout.
@@ -285,12 +279,11 @@ impl Tape {
 
         let s = resu32.to_string();
 
-        let write_res = std::io::stdout().lock().write_all(s.as_bytes());
-
-        match write_res {
-            Ok(_) => Ok(()),
-            Err(e) => Err(TapeError::from(e)),
+        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
+            return Err(TapeError::from(e));
         }
+
+        Ok(())
     }
 
     /// Writes the current cell and the next seven interpreted as an 64-bit unsigned integer to stdout.
@@ -307,12 +300,11 @@ impl Tape {
 
         let s = resu64.to_string();
 
-        let write_res = std::io::stdout().lock().write_all(s.as_bytes());
-
-        match write_res {
-            Ok(_) => Ok(()),
-            Err(e) => Err(TapeError::from(e)),
+        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
+            return Err(TapeError::from(e));
         }
+
+        Ok(())
     }
 
     /// Writes the current cell and the next three interpreted as an 32-bit floating point number to stdout.
@@ -329,12 +321,11 @@ impl Tape {
 
         let s = resf32.to_string();
 
-        let write_res = std::io::stdout().lock().write_all(s.as_bytes());
-
-        match write_res {
-            Ok(_) => Ok(()),
-            Err(e) => Err(TapeError::from(e)),
+        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
+            return Err(TapeError::from(e));
         }
+
+        Ok(())
     }
 
     /// Writes the current cell and the next seven interpreted as an 64-bit floating point number to stdout.
@@ -351,17 +342,17 @@ impl Tape {
 
         let s = resf64.to_string();
 
-        let write_res = std::io::stdout().lock().write_all(s.as_bytes());
-
-        match write_res {
-            Ok(_) => Ok(()),
-            Err(e) => Err(TapeError::from(e)),
+        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
+            return Err(TapeError::from(e));
         }
+
+        Ok(())
     }
 
     /// Reads a character from stdin and stores it in the current cell.
     pub fn rdi(&mut self) -> TapeResult<()> {
         let b = std::io::stdin().lock().bytes().next();
+
         match b {
             Some(res) => match res {
                 Ok(byte) => Ok(self.store(byte)?),
