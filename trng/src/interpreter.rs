@@ -13,7 +13,6 @@
 
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 use crate::{
     lexer,
     tape::{self, TapeError},
@@ -318,7 +317,7 @@ where
             }),
         },
         None => Err(InterpreterError {
-            description: format!("Expected 'num'. Found nothing instead."),
+            description: "Expected 'num'. Found nothing instead.".to_string(),
         }),
     }
 }

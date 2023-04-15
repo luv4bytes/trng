@@ -96,13 +96,9 @@ impl Lexer {
             let byte_char = byte as char;
 
             if byte_char.is_whitespace() {
-                let topt = self.token_from_buffer();
-                match topt {
-                    Some(token) => {
-                        tokens.push(token);
-                        self.token_buffer.clear();
-                    }
-                    None => (),
+                if let Some(token) = self.token_from_buffer() {
+                    tokens.push(token);
+                    self.token_buffer.clear();
                 }
 
                 if byte_char == '\n' {
@@ -119,13 +115,9 @@ impl Lexer {
             self.current_column += 1;
         }
 
-        let topt = self.token_from_buffer();
-        match topt {
-            Some(token) => {
-                tokens.push(token);
-                self.token_buffer.clear();
-            }
-            None => (),
+        if let Some(token) = self.token_from_buffer() {
+            tokens.push(token);
+            self.token_buffer.clear();
         }
 
         Ok(tokens)
@@ -144,29 +136,29 @@ impl Lexer {
             .expect("Token buffer should not have been empty at this point.");
 
         if (*first_byte as char).is_alphabetic() {
-            return match &self.token_buffer.as_str() {
-                &"pfw" => Some(self.token_from_internal(TokenType::Pfw)),
-                &"pbw" => Some(self.token_from_internal(TokenType::Pbw)),
-                &"inc" => Some(self.token_from_internal(TokenType::Inc)),
-                &"dec" => Some(self.token_from_internal(TokenType::Dec)),
-                &"lop" => Some(self.token_from_internal(TokenType::Lop)),
-                &"pol" => Some(self.token_from_internal(TokenType::Pol)),
-                &"wrt" => Some(self.token_from_internal(TokenType::Wrt)),
-                &"wrti8" => Some(self.token_from_internal(TokenType::Wrti8)),
-                &"wrti16" => Some(self.token_from_internal(TokenType::Wrti16)),
-                &"wrti32" => Some(self.token_from_internal(TokenType::Wrti32)),
-                &"wrti64" => Some(self.token_from_internal(TokenType::Wrti64)),
-                &"wrtu8" => Some(self.token_from_internal(TokenType::Wrtu8)),
-                &"wrtu16" => Some(self.token_from_internal(TokenType::Wrtu16)),
-                &"wrtu32" => Some(self.token_from_internal(TokenType::Wrtu32)),
-                &"wrtu64" => Some(self.token_from_internal(TokenType::Wrtu64)),
-                &"wrtf32" => Some(self.token_from_internal(TokenType::Wrtf32)),
-                &"wrtf64" => Some(self.token_from_internal(TokenType::Wrtf64)),
-                &"rdi" => Some(self.token_from_internal(TokenType::Rdi)),
-                &"rda" => Some(self.token_from_internal(TokenType::Rda)),
-                &"set" => Some(self.token_from_internal(TokenType::Set)),
-                &"wra" => Some(self.token_from_internal(TokenType::Wra)),
-                &"clr" => Some(self.token_from_internal(TokenType::Clr)),
+            return match self.token_buffer.as_str() {
+                "pfw" => Some(self.token_from_internal(TokenType::Pfw)),
+                "pbw" => Some(self.token_from_internal(TokenType::Pbw)),
+                "inc" => Some(self.token_from_internal(TokenType::Inc)),
+                "dec" => Some(self.token_from_internal(TokenType::Dec)),
+                "lop" => Some(self.token_from_internal(TokenType::Lop)),
+                "pol" => Some(self.token_from_internal(TokenType::Pol)),
+                "wrt" => Some(self.token_from_internal(TokenType::Wrt)),
+                "wrti8" => Some(self.token_from_internal(TokenType::Wrti8)),
+                "wrti16" => Some(self.token_from_internal(TokenType::Wrti16)),
+                "wrti32" => Some(self.token_from_internal(TokenType::Wrti32)),
+                "wrti64" => Some(self.token_from_internal(TokenType::Wrti64)),
+                "wrtu8" => Some(self.token_from_internal(TokenType::Wrtu8)),
+                "wrtu16" => Some(self.token_from_internal(TokenType::Wrtu16)),
+                "wrtu32" => Some(self.token_from_internal(TokenType::Wrtu32)),
+                "wrtu64" => Some(self.token_from_internal(TokenType::Wrtu64)),
+                "wrtf32" => Some(self.token_from_internal(TokenType::Wrtf32)),
+                "wrtf64" => Some(self.token_from_internal(TokenType::Wrtf64)),
+                "rdi" => Some(self.token_from_internal(TokenType::Rdi)),
+                "rda" => Some(self.token_from_internal(TokenType::Rda)),
+                "set" => Some(self.token_from_internal(TokenType::Set)),
+                "wra" => Some(self.token_from_internal(TokenType::Wra)),
+                "clr" => Some(self.token_from_internal(TokenType::Clr)),
                 &_ => Some(self.token_from_internal(TokenType::Unknown)),
             };
         } else if (*first_byte as char).is_numeric() {
@@ -181,7 +173,7 @@ impl Lexer {
             value: self.token_buffer.to_string(),
             line: self.current_line,
             column: self.current_column - self.token_buffer.len() as u32,
-            _type: _type,
+            _type,
         }
     }
 }

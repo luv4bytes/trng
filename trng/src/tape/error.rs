@@ -3,22 +3,22 @@ use std::array::TryFromSliceError;
 /// Defines error types for tape errors.
 #[derive(Debug)]
 pub enum TapeErrorType {
-    IndexError,
-    OverflowError,
-    IoError,
+    Index,
+    Overflow,
+    Io,
 }
 
 impl std::fmt::Display for TapeErrorType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            TapeErrorType::IndexError => {
-                write!(f, "{}", "Index error")
+            TapeErrorType::Index => {
+                write!(f, "Index error")
             }
-            TapeErrorType::OverflowError => {
-                write!(f, "{}", "Overflow error")
+            TapeErrorType::Overflow => {
+                write!(f, "Overflow error")
             }
-            TapeErrorType::IoError => {
-                write!(f, "{}", "IO error")
+            TapeErrorType::Io => {
+                write!(f, "IO error")
             }
         }
     }
@@ -42,7 +42,7 @@ impl From<std::io::Error> for TapeError {
     fn from(value: std::io::Error) -> Self {
         Self {
             description: value.to_string(),
-            _type: TapeErrorType::IoError,
+            _type: TapeErrorType::Io,
         }
     }
 }
@@ -51,16 +51,13 @@ impl From<TryFromSliceError> for TapeError {
     fn from(value: TryFromSliceError) -> Self {
         Self {
             description: value.to_string(),
-            _type: TapeErrorType::IndexError,
+            _type: TapeErrorType::Index,
         }
     }
 }
 
 impl TapeError {
     pub fn new(_type: TapeErrorType, description: String) -> TapeError {
-        Self {
-            _type: _type,
-            description: description,
-        }
+        Self { _type, description }
     }
 }

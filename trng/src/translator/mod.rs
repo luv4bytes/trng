@@ -1,1 +1,5 @@
-mod translator;
+struct Translator;
+
+impl Translator {
+    // TODO:
+}
