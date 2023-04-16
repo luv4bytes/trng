@@ -68,6 +68,17 @@ pub struct Token {
     pub _type: TokenType,
 }
 
+impl Token {
+    pub fn new(value: String, line: u32, column: u32, _type: TokenType) -> Self {
+        Self {
+            value,
+            line,
+            column,
+            _type,
+        }
+    }
+}
+
 impl Lexer {
     /// Constructor creates a new lexer with initialized values.
     pub fn new() -> Lexer {
@@ -169,12 +180,12 @@ impl Lexer {
     }
 
     fn token_from_internal(&self, _type: TokenType) -> Token {
-        Token {
-            value: self.token_buffer.to_string(),
-            line: self.current_line,
-            column: self.current_column - self.token_buffer.len() as u32,
+        Token::new(
+            self.token_buffer.to_string(),
+            self.current_line,
+            self.current_column,
             _type,
-        }
+        )
     }
 }
 

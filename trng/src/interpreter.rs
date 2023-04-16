@@ -120,34 +120,24 @@ impl Interpreter {
                 lexer::TokenType::Pfw => {
                     i += 1;
                     let steps = expect_num::<usize>(tokens.get(i))?;
-                    if let Err(e) = self.tape.pfw(steps) {
-                        return Err(InterpreterError::from(e));
-                    }
+                    self.tape.pfw(steps)?;
                 }
                 lexer::TokenType::Pbw => {
                     i += 1;
                     let steps = expect_num::<usize>(tokens.get(i))?;
-                    if let Err(e) = self.tape.pbw(steps) {
-                        return Err(InterpreterError::from(e));
-                    }
+                    self.tape.pbw(steps)?;
                 }
                 lexer::TokenType::Inc => {
                     i += 1;
                     let by = expect_num::<u8>(tokens.get(i))?;
-                    if let Err(e) = self.tape.inc(by) {
-                        return Err(InterpreterError::from(e));
-                    }
+                    self.tape.inc(by)?;
                 }
                 lexer::TokenType::Dec => {
                     i += 1;
                     let by = expect_num::<u8>(tokens.get(i))?;
-                    if let Err(e) = self.tape.dec(by) {
-                        return Err(InterpreterError::from(e));
-                    }
+                    self.tape.dec(by)?;
                 }
-                lexer::TokenType::Lop => {
-                    self.loop_stack.push(self.instruction_index);
-                }
+                lexer::TokenType::Lop => self.loop_stack.push(self.instruction_index),
                 lexer::TokenType::Pol => {
                     let last = self.loop_stack.last();
                     match last {
@@ -174,66 +164,18 @@ impl Interpreter {
                         }
                     }
                 }
-                lexer::TokenType::Wrt => {
-                    if let Err(e) = self.tape.wrt() {
-                        return Err(InterpreterError::from(e));
-                    }
-                }
-                lexer::TokenType::Wrti8 => {
-                    if let Err(e) = self.tape.wrti8() {
-                        return Err(InterpreterError::from(e));
-                    }
-                }
-                lexer::TokenType::Wrti16 => {
-                    if let Err(e) = self.tape.wrti16() {
-                        return Err(InterpreterError::from(e));
-                    }
-                }
-                lexer::TokenType::Wrti32 => {
-                    if let Err(e) = self.tape.wrti32() {
-                        return Err(InterpreterError::from(e));
-                    }
-                }
-                lexer::TokenType::Wrti64 => {
-                    if let Err(e) = self.tape.wrti64() {
-                        return Err(InterpreterError::from(e));
-                    }
-                }
-                lexer::TokenType::Wrtu8 => {
-                    if let Err(e) = self.tape.wrtu8() {
-                        return Err(InterpreterError::from(e));
-                    }
-                }
-                lexer::TokenType::Wrtu16 => {
-                    if let Err(e) = self.tape.wrtu16() {
-                        return Err(InterpreterError::from(e));
-                    }
-                }
-                lexer::TokenType::Wrtu32 => {
-                    if let Err(e) = self.tape.wrtu32() {
-                        return Err(InterpreterError::from(e));
-                    }
-                }
-                lexer::TokenType::Wrtu64 => {
-                    if let Err(e) = self.tape.wrtu64() {
-                        return Err(InterpreterError::from(e));
-                    }
-                }
-                lexer::TokenType::Wrtf32 => {
-                    if let Err(e) = self.tape.wrtf32() {
-                        return Err(InterpreterError::from(e));
-                    }
-                }
-                lexer::TokenType::Wrtf64 => {
-                    if let Err(e) = self.tape.wrtf64() {
-                        return Err(InterpreterError::from(e));
-                    }
-                }
-                lexer::TokenType::Rdi => {
-                    if let Err(e) = self.tape.rdi() {
-                        return Err(InterpreterError::from(e));
-                    }
-                }
+                lexer::TokenType::Wrt => self.tape.wrt()?,
+                lexer::TokenType::Wrti8 => self.tape.wrti8()?,
+                lexer::TokenType::Wrti16 => self.tape.wrti16()?,
+                lexer::TokenType::Wrti32 => self.tape.wrti32()?,
+                lexer::TokenType::Wrti64 => self.tape.wrti64()?,
+                lexer::TokenType::Wrtu8 => self.tape.wrtu8()?,
+                lexer::TokenType::Wrtu16 => self.tape.wrtu16()?,
+                lexer::TokenType::Wrtu32 => self.tape.wrtu32()?,
+                lexer::TokenType::Wrtu64 => self.tape.wrtu64()?,
+                lexer::TokenType::Wrtf32 => self.tape.wrtf32()?,
+                lexer::TokenType::Wrtf64 => self.tape.wrtf64()?,
+                lexer::TokenType::Rdi => self.tape.rdi()?,
                 lexer::TokenType::Set => {
                     i += 1;
                     let value = tokens.get(i);
@@ -252,21 +194,9 @@ impl Interpreter {
                         }
                     }
                 }
-                lexer::TokenType::Wra => {
-                    if let Err(e) = self.tape.wra() {
-                        return Err(InterpreterError::from(e));
-                    }
-                }
-                lexer::TokenType::Rda => {
-                    if let Err(e) = self.tape.rda() {
-                        return Err(InterpreterError::from(e));
-                    }
-                }
-                lexer::TokenType::Clr => {
-                    if let Err(e) = self.tape.clr() {
-                        return Err(InterpreterError::from(e));
-                    }
-                }
+                lexer::TokenType::Wra => self.tape.wra()?,
+                lexer::TokenType::Rda => self.tape.rda()?,
+                lexer::TokenType::Clr => self.tape.clr()?,
                 lexer::TokenType::Unknown => {
                     return Err(InterpreterError {
                         description: format!(
@@ -328,7 +258,7 @@ mod tests {
 
     #[test]
     fn wrt_is_successful_test() {
-        let code = "
+        let code = r#"
             set Hello
             pbw 5
             wrt
@@ -340,7 +270,7 @@ mod tests {
             wrt
             pfw 1
             wrt
-            ";
+            "#;
 
         let reader = BufReader::new(code.as_bytes());
         let mut interpreter = super::Interpreter::default();
