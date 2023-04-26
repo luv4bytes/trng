@@ -31,8 +31,8 @@ It works based on the same principle with a few modifications to make writing pr
 |[setu16](#setu)  |[value]  |Sets the given [value] as an 16-bit signed integer.
 |[setu32](#setu)  |[value]  |Sets the given [value] as an 32-bit signed integer.
 |[setu64](#setu)  |[value]  |Sets the given [value] as an 64-bit signed integer.
-|[setf32](#setu)  |[value]  |Sets the given [value] as a 32-bit float.
-|[setf64](#setu)  |[value]  |Sets the given [value] as a 64-bit float.
+|[setf32](#setf)  |[value]  |Sets the given [value] as a 32-bit float.
+|[setf64](#setf)  |[value]  |Sets the given [value] as a 64-bit float.
 |[wrt](#wrt)      |         |Write the value of the current cell to the standard output.
 |[wrti8](#wrti)   |         |Write the value of the current cell to the standard output. The value is interpreted as an 8-bit integer in BE byte order.
 |[wrti16](#wrti)  |         |Write 2 bytes interpreted as an 16-bit integer in BE byte order.
@@ -124,7 +124,7 @@ Example:
 
 #### SETI*
 
-SETI* (set given value) is used to set the given value as a signed integer.
+SETI* (set given value) is used to set the given value as a signed integer. The pointer will be moved accordingly.
 
 Syntax:
 
@@ -140,6 +140,18 @@ Example:
 #### SETU*
 
 See [SETI*](#seti). This is the unsigned version.
+
+### SETF*
+
+Set the given value as a 32-bit float or a 64-bit float. The pointer will be moved accordingly.
+
+Syntax:
+
+    setf [value]
+
+Example:
+
+    setf32 1.23
 
 ### Loops
 
