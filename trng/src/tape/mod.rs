@@ -1,8 +1,11 @@
 mod error;
+mod tape_num;
 
 pub use error::{TapeError, TapeErrorType};
 
 use std::io::{Read, Write};
+
+use self::tape_num::TapeNum;
 
 /// Type alias for a simple result with a TapeError.
 pub type TapeResult<T> = Result<T, TapeError>;
@@ -154,192 +157,70 @@ impl Tape {
 
     /// Writes the value of the current cell as an 8-bit signed integer to stdout.
     pub fn wrti8(&mut self) -> TapeResult<()> {
-        let b = self.get_current_value()? as i8;
-        let i = b.to_string();
-
-        if let Err(e) = std::io::stdout().lock().write_all(i.as_bytes()) {
-            return Err(TapeError::from(e));
-        }
+        self.wrt_tape_num::<i8>()?;
 
         Ok(())
     }
 
     /// Writes the current cell and the next interpreted as an 16-bit signed integer to stdout.
     pub fn wrti16(&mut self) -> TapeResult<()> {
-        let slice = &self.data[self.ptr_index..self.ptr_index + 2];
-
-        let byte_slice = <&[u8; 2]>::try_from(slice);
-        let bytes = match byte_slice {
-            Ok(b) => b,
-            Err(e) => return Err(TapeError::from(e)),
-        };
-
-        let resi16 = i16::from_be_bytes(*bytes);
-
-        let s = resi16.to_string();
-
-        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
-            return Err(TapeError::from(e));
-        }
+        self.wrt_tape_num::<i16>()?;
 
         Ok(())
     }
 
     /// Writes the current cell and the next three interpreted as an 32-bit signed integer to stdout.
     pub fn wrti32(&mut self) -> TapeResult<()> {
-        let slice = &self.data[self.ptr_index..self.ptr_index + 4];
-
-        let byte_slice = <&[u8; 4]>::try_from(slice);
-        let bytes = match byte_slice {
-            Ok(b) => b,
-            Err(e) => return Err(TapeError::from(e)),
-        };
-
-        let resi32 = i32::from_be_bytes(*bytes);
-
-        let s = resi32.to_string();
-
-        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
-            return Err(TapeError::from(e));
-        }
+        self.wrt_tape_num::<i32>()?;
 
         Ok(())
     }
 
     /// Writes the current cell and the next seven interpreted as an 64-bit signed integer to stdout.
     pub fn wrti64(&mut self) -> TapeResult<()> {
-        let slice = &self.data[self.ptr_index..self.ptr_index + 8];
-
-        let byte_slice = <&[u8; 8]>::try_from(slice);
-        let bytes = match byte_slice {
-            Ok(b) => b,
-            Err(e) => return Err(TapeError::from(e)),
-        };
-
-        let resi64 = i64::from_be_bytes(*bytes);
-
-        let s = resi64.to_string();
-
-        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
-            return Err(TapeError::from(e));
-        }
+        self.wrt_tape_num::<i64>()?;
 
         Ok(())
     }
 
     /// Writes the value of the current cell as an 8-bit unsigned integer to stdout.
     pub fn wrtu8(&mut self) -> TapeResult<()> {
-        let b = self.get_current_value()?;
-        let s = b.to_string();
-
-        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
-            return Err(TapeError::from(e));
-        }
+        self.wrt_tape_num::<u8>()?;
 
         Ok(())
     }
 
     /// Writes the current cell and the next interpreted as an 16-bit unsigned integer to stdout.
     pub fn wrtu16(&mut self) -> TapeResult<()> {
-        let slice = &self.data[self.ptr_index..self.ptr_index + 2];
-
-        let byte_slice = <&[u8; 2]>::try_from(slice);
-        let bytes = match byte_slice {
-            Ok(b) => b,
-            Err(e) => return Err(TapeError::from(e)),
-        };
-
-        let resu16 = u16::from_be_bytes(*bytes);
-
-        let s = resu16.to_string();
-
-        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
-            return Err(TapeError::from(e));
-        }
+        self.wrt_tape_num::<u16>()?;
 
         Ok(())
     }
 
     /// Writes the current cell and the next three interpreted as an 32-bit signed integer to stdout.
     pub fn wrtu32(&mut self) -> TapeResult<()> {
-        let slice = &self.data[self.ptr_index..self.ptr_index + 4];
-
-        let byte_slice = <&[u8; 4]>::try_from(slice);
-        let bytes = match byte_slice {
-            Ok(b) => b,
-            Err(e) => return Err(TapeError::from(e)),
-        };
-
-        let resu32 = u32::from_be_bytes(*bytes);
-
-        let s = resu32.to_string();
-
-        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
-            return Err(TapeError::from(e));
-        }
+        self.wrt_tape_num::<u32>()?;
 
         Ok(())
     }
 
     /// Writes the current cell and the next seven interpreted as an 64-bit unsigned integer to stdout.
     pub fn wrtu64(&mut self) -> TapeResult<()> {
-        let slice = &self.data[self.ptr_index..self.ptr_index + 8];
-
-        let byte_slice = <&[u8; 8]>::try_from(slice);
-        let bytes = match byte_slice {
-            Ok(b) => b,
-            Err(e) => return Err(TapeError::from(e)),
-        };
-
-        let resu64 = u64::from_be_bytes(*bytes);
-
-        let s = resu64.to_string();
-
-        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
-            return Err(TapeError::from(e));
-        }
+        self.wrt_tape_num::<u64>()?;
 
         Ok(())
     }
 
     /// Writes the current cell and the next three interpreted as an 32-bit floating point number to stdout.
     pub fn wrtf32(&mut self) -> TapeResult<()> {
-        let slice = &self.data[self.ptr_index..self.ptr_index + 4];
-
-        let byte_slice = <&[u8; 4]>::try_from(slice);
-        let bytes = match byte_slice {
-            Ok(b) => b,
-            Err(e) => return Err(TapeError::from(e)),
-        };
-
-        let resf32 = f32::from_be_bytes(*bytes);
-
-        let s = resf32.to_string();
-
-        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
-            return Err(TapeError::from(e));
-        }
+        self.wrt_tape_num::<f32>()?;
 
         Ok(())
     }
 
     /// Writes the current cell and the next seven interpreted as an 64-bit floating point number to stdout.
     pub fn wrtf64(&mut self) -> TapeResult<()> {
-        let slice = &self.data[self.ptr_index..self.ptr_index + 8];
-
-        let byte_slice = <&[u8; 8]>::try_from(slice);
-        let bytes = match byte_slice {
-            Ok(b) => b,
-            Err(e) => return Err(TapeError::from(e)),
-        };
-
-        let resf64 = f64::from_be_bytes(*bytes);
-
-        let s = resf64.to_string();
-
-        if let Err(e) = std::io::stdout().lock().write_all(s.as_bytes()) {
-            return Err(TapeError::from(e));
-        }
+        self.wrt_tape_num::<f64>()?;
 
         Ok(())
     }
@@ -361,9 +242,89 @@ impl Tape {
     /// * `v` - The value to set.
     pub fn set(&mut self, v: &str) -> TapeResult<()> {
         for b in v.as_bytes() {
-            self.data[self.ptr_index] = *b;
-            self.ptr_index += 1;
+            self.store(*b)?;
+            self.step_fw()?;
         }
+
+        Ok(())
+    }
+
+    /// Sets the given value as an 8-bit signed integer.
+    /// * `v` - The value to set.
+    pub fn seti8(&mut self, v: i8) -> TapeResult<()> {
+        self.set_tape_num(v)?;
+
+        Ok(())
+    }
+
+    /// Sets the given value as an 16-bit signed integer.
+    /// * `v` - The value to set.
+    pub fn seti16(&mut self, v: i16) -> TapeResult<()> {
+        self.set_tape_num(v)?;
+
+        Ok(())
+    }
+
+    /// Sets the given value as an 32-bit signed integer.
+    /// * `v` - The value to set.
+    pub fn seti32(&mut self, v: i32) -> TapeResult<()> {
+        self.set_tape_num(v)?;
+
+        Ok(())
+    }
+
+    /// Sets the given value as an 64-bit signed integer.
+    /// * `v` - The value to set.
+    pub fn seti64(&mut self, v: i64) -> TapeResult<()> {
+        self.set_tape_num(v)?;
+
+        Ok(())
+    }
+
+    /// Sets the given value as an 8-bit unsigned integer.
+    /// * `v` - The value to set.
+    pub fn setu8(&mut self, v: u8) -> TapeResult<()> {
+        self.set_tape_num(v)?;
+
+        Ok(())
+    }
+
+    /// Sets the given value as an 16-bit unsigned integer.
+    /// * `v` - The value to set.
+    pub fn setu16(&mut self, v: u16) -> TapeResult<()> {
+        self.set_tape_num(v)?;
+
+        Ok(())
+    }
+
+    /// Sets the given value as an 32-bit unsigned integer.
+    /// * `v` - The value to set.
+    pub fn setu32(&mut self, v: u32) -> TapeResult<()> {
+        self.set_tape_num(v)?;
+
+        Ok(())
+    }
+
+    /// Sets the given value as an 64-bit unsigned integer.
+    /// * `v` - The value to set.
+    pub fn setu64(&mut self, v: u64) -> TapeResult<()> {
+        self.set_tape_num(v)?;
+
+        Ok(())
+    }
+
+    /// Sets the given value as a 32-bit float.
+    /// * `v` - The value to set.
+    pub fn setf32(&mut self, v: f32) -> TapeResult<()> {
+        self.set_tape_num(v)?;
+
+        Ok(())
+    }
+
+    /// Sets the given value as a 64-bit float.
+    /// * `v` - The value to set.
+    pub fn setf64(&mut self, v: f64) -> TapeResult<()> {
+        self.set_tape_num(v)?;
 
         Ok(())
     }
@@ -443,6 +404,28 @@ impl Tape {
 
     fn store(&mut self, byte: u8) -> TapeResult<()> {
         self.data[self.ptr_index] = byte;
+        Ok(())
+    }
+
+    fn set_tape_num<T: TapeNum>(&mut self, v: T) -> TapeResult<()> {
+        for byte in v.get_bytes() {
+            self.store(byte)?;
+            self.step_fw()?;
+        }
+
+        Ok(())
+    }
+
+    fn wrt_tape_num<T: TapeNum>(&mut self) -> TapeResult<()> {
+        let slice = &self.data[self.ptr_index..self.ptr_index + T::number_of_bytes()];
+        let v = slice.to_vec();
+
+        let tv = T::from(v).to_string();
+
+        if let Err(e) = std::io::stdout().lock().write_all(tv.as_bytes()) {
+            return Err(TapeError::from(e));
+        }
+
         Ok(())
     }
 }
@@ -689,6 +672,86 @@ mod tests {
     fn set_successful_test() {
         let mut tape = super::Tape::default();
         let res = tape.set("Hello");
+
+        assert!(!res.is_err())
+    }
+
+    #[test]
+    fn seti8_successful_test() {
+        let mut tape = super::Tape::default();
+        let res = tape.seti8(127);
+
+        assert!(!res.is_err())
+    }
+
+    #[test]
+    fn seti16_successful_test() {
+        let mut tape = super::Tape::default();
+        let res = tape.seti16(1031);
+
+        assert!(!res.is_err())
+    }
+
+    #[test]
+    fn seti32_successful_test() {
+        let mut tape = super::Tape::default();
+        let res = tape.seti32(i32::MAX);
+
+        assert!(!res.is_err())
+    }
+
+    #[test]
+    fn seti64_successful_test() {
+        let mut tape = super::Tape::default();
+        let res = tape.seti64(i64::MAX);
+
+        assert!(!res.is_err())
+    }
+
+    #[test]
+    fn setu8_successful_test() {
+        let mut tape = super::Tape::default();
+        let res = tape.setu8(127);
+
+        assert!(!res.is_err())
+    }
+
+    #[test]
+    fn setu16_successful_test() {
+        let mut tape = super::Tape::default();
+        let res = tape.setu16(1031);
+
+        assert!(!res.is_err())
+    }
+
+    #[test]
+    fn setu32_successful_test() {
+        let mut tape = super::Tape::default();
+        let res = tape.setu32(u32::MAX);
+
+        assert!(!res.is_err())
+    }
+
+    #[test]
+    fn setu64_successful_test() {
+        let mut tape = super::Tape::default();
+        let res = tape.setu64(u64::MAX);
+
+        assert!(!res.is_err())
+    }
+
+    #[test]
+    fn setf32_successful_test() {
+        let mut tape = super::Tape::default();
+        let res = tape.setf32(f32::MAX);
+
+        assert!(!res.is_err())
+    }
+
+    #[test]
+    fn setf64_successful_test() {
+        let mut tape = super::Tape::default();
+        let res = tape.setf64(f64::MAX);
 
         assert!(!res.is_err())
     }

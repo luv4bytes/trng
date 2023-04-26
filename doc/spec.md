@@ -23,6 +23,16 @@ It works based on the same principle with a few modifications to make writing pr
 |[lop](#lop)      |         |Starts a loop.
 |[pol](#pol)      |         |Ends the current loop if the value of the current cell is equal to 0.
 |[set](#set)      |[value]  |Sets the given [value], placing each byte in a separate cell and incrementing the pointer accordingly.
+|[seti8](#seti)   |[value]  |Sets the given [value] as an 8-bit signed integer.
+|[seti16](#seti)  |[value]  |Sets the given [value] as an 16-bit signed integer.
+|[seti32](#seti)  |[value]  |Sets the given [value] as an 32-bit signed integer.
+|[seti64](#seti)  |[value]  |Sets the given [value] as an 64-bit signed integer.
+|[setu8](#setu)   |[value]  |Sets the given [value] as an 8-bit signed integer.
+|[setu16](#setu)  |[value]  |Sets the given [value] as an 16-bit signed integer.
+|[setu32](#setu)  |[value]  |Sets the given [value] as an 32-bit signed integer.
+|[setu64](#setu)  |[value]  |Sets the given [value] as an 64-bit signed integer.
+|[setf32](#setu)  |[value]  |Sets the given [value] as a 32-bit float.
+|[setf64](#setu)  |[value]  |Sets the given [value] as a 64-bit float.
 |[wrt](#wrt)      |         |Write the value of the current cell to the standard output.
 |[wrti8](#wrti)   |         |Write the value of the current cell to the standard output. The value is interpreted as an 8-bit integer in BE byte order.
 |[wrti16](#wrti)  |         |Write 2 bytes interpreted as an 16-bit integer in BE byte order.
@@ -111,6 +121,25 @@ Example:
     inc 32
     pfw 1
     set World
+
+#### SETI*
+
+SETI* (set given value) is used to set the given value as a signed integer.
+
+Syntax:
+
+    seti* [value]
+
+Example:
+
+    seti8 12
+    seti16 10000
+    seti32 1230020
+    seti64 122121211212
+
+#### SETU*
+
+See [SETI*](#seti). This is the unsigned version.
 
 ### Loops
 

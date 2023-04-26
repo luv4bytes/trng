@@ -51,6 +51,16 @@ pub enum TokenType {
     Wrtf32,
     Wrtf64,
     Set,
+    Seti8,
+    Seti16,
+    Seti32,
+    Seti64,
+    Setu8,
+    Setu16,
+    Setu32,
+    Setu64,
+    Setf32,
+    Setf64,
     Wra,
     Clr,
     Unknown,
@@ -168,11 +178,22 @@ impl Lexer {
                 "rdi" => Some(self.token_from_internal(TokenType::Rdi)),
                 "rda" => Some(self.token_from_internal(TokenType::Rda)),
                 "set" => Some(self.token_from_internal(TokenType::Set)),
+                "seti8" => Some(self.token_from_internal(TokenType::Seti8)),
+                "seti16" => Some(self.token_from_internal(TokenType::Seti16)),
+                "seti32" => Some(self.token_from_internal(TokenType::Seti32)),
+                "seti64" => Some(self.token_from_internal(TokenType::Seti64)),
+                "setu8" => Some(self.token_from_internal(TokenType::Setu8)),
+                "setu16" => Some(self.token_from_internal(TokenType::Setu16)),
+                "setu32" => Some(self.token_from_internal(TokenType::Setu32)),
+                "setu64" => Some(self.token_from_internal(TokenType::Setu64)),
                 "wra" => Some(self.token_from_internal(TokenType::Wra)),
+                "setf32" => Some(self.token_from_internal(TokenType::Setf32)),
+                "setf64" => Some(self.token_from_internal(TokenType::Setf64)),
                 "clr" => Some(self.token_from_internal(TokenType::Clr)),
                 &_ => Some(self.token_from_internal(TokenType::Unknown)),
             };
-        } else if (*first_byte as char).is_numeric() {
+        } else if (*first_byte as char).is_numeric() || (*first_byte as char).is_ascii_punctuation()
+        {
             return Some(self.token_from_internal(TokenType::Num));
         } else {
             return Some(self.token_from_internal(TokenType::Unknown));

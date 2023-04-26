@@ -60,7 +60,7 @@ impl Translator {
         tokens
             .iter()
             .map(|token| {
-                if Translator::is_supported_token(&token._type) {
+                if !Translator::is_supported_token(&token._type) {
                     return Err(TranslatorError::new(
                         error::TranslatorErrorType::NotSupported,
                         format!(
@@ -85,6 +85,7 @@ impl Translator {
         matches!(
             token_type,
             TokenType::Dec
+                | TokenType::Num
                 | TokenType::Inc
                 | TokenType::Pfw
                 | TokenType::Pbw

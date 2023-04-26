@@ -13,6 +13,7 @@
 
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 use crate::{
     lexer,
     tape::{self, TapeError},
@@ -194,6 +195,56 @@ impl Interpreter {
                         }
                     }
                 }
+                lexer::TokenType::Seti8 => {
+                    i += 1;
+                    let v = expect_num::<i8>(tokens.get(i))?;
+                    self.tape.seti8(v)?;
+                }
+                lexer::TokenType::Seti16 => {
+                    i += 1;
+                    let v = expect_num::<i16>(tokens.get(i))?;
+                    self.tape.seti16(v)?;
+                }
+                lexer::TokenType::Seti32 => {
+                    i += 1;
+                    let v = expect_num::<i32>(tokens.get(i))?;
+                    self.tape.seti32(v)?;
+                }
+                lexer::TokenType::Seti64 => {
+                    i += 1;
+                    let v = expect_num::<i64>(tokens.get(i))?;
+                    self.tape.seti64(v)?;
+                }
+                lexer::TokenType::Setu8 => {
+                    i += 1;
+                    let v = expect_num::<u8>(tokens.get(i))?;
+                    self.tape.setu8(v)?;
+                }
+                lexer::TokenType::Setu16 => {
+                    i += 1;
+                    let v = expect_num::<u16>(tokens.get(i))?;
+                    self.tape.setu16(v)?;
+                }
+                lexer::TokenType::Setu32 => {
+                    i += 1;
+                    let v = expect_num::<u32>(tokens.get(i))?;
+                    self.tape.setu32(v)?;
+                }
+                lexer::TokenType::Setu64 => {
+                    i += 1;
+                    let v = expect_num::<u64>(tokens.get(i))?;
+                    self.tape.setu64(v)?;
+                }
+                lexer::TokenType::Setf32 => {
+                    i += 1;
+                    let v = expect_num::<f32>(tokens.get(i))?;
+                    self.tape.setf32(v)?;
+                }
+                lexer::TokenType::Setf64 => {
+                    i += 1;
+                    let v = expect_num::<f64>(tokens.get(i))?;
+                    self.tape.setf64(v)?;
+                }
                 lexer::TokenType::Wra => self.tape.wra()?,
                 lexer::TokenType::Rda => self.tape.rda()?,
                 lexer::TokenType::Clr => self.tape.clr()?,
@@ -308,6 +359,42 @@ mod tests {
     #[test]
     fn run_loop_example_successful_test() {
         let f = std::fs::File::open("../examples/loop.trng");
+
+        assert!(!f.is_err());
+
+        let mut interpreter = super::Interpreter::default();
+        let run_result = interpreter.run(f.unwrap());
+
+        assert!(!run_result.is_err());
+    }
+
+    #[test]
+    fn run_seti_example_successful_test() {
+        let f = std::fs::File::open("../examples/seti.trng");
+
+        assert!(!f.is_err());
+
+        let mut interpreter = super::Interpreter::default();
+        let run_result = interpreter.run(f.unwrap());
+
+        assert!(!run_result.is_err());
+    }
+
+    #[test]
+    fn run_setu_example_successful_test() {
+        let f = std::fs::File::open("../examples/setu.trng");
+
+        assert!(!f.is_err());
+
+        let mut interpreter = super::Interpreter::default();
+        let run_result = interpreter.run(f.unwrap());
+
+        assert!(!run_result.is_err());
+    }
+
+    #[test]
+    fn run_setf_example_successful_test() {
+        let f = std::fs::File::open("../examples/setf.trng");
 
         assert!(!f.is_err());
 
