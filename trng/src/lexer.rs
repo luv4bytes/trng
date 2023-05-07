@@ -28,6 +28,7 @@ pub struct Lexer {
     token_buffer: String,
 }
 
+#[derive(PartialEq, Eq)]
 /// Defines token types.
 pub enum TokenType {
     Pfw,
@@ -101,7 +102,7 @@ impl Lexer {
 
     /// Tokenizes the given file and returns a vector of found tokens.
     /// # Arguments
-    /// * `file` - Path of the file that will be tokenized.
+    /// * `read_from` - The `Read` instance to read the code from.
     pub fn tokenize<T>(&mut self, read_from: T) -> Result<Vec<Token>, std::io::Error>
     where
         T: Read,

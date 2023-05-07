@@ -8,7 +8,7 @@ The TRNG interpreter is written in [Rust](https://www.rust-lang.org/).
 
 ## Specification
 
-For further information about all instructions please read [the language specification](./doc/spec.md).
+For further information about all instructions please read [the language specification](./doc/SPEC.md).
 
 ## Examples
 

@@ -15,13 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 mod error;
-mod tape_num;
+mod num;
 
 pub use error::{TapeError, TapeErrorType};
 
+use self::num::Num;
 use std::io::{Read, Write};
-
-use self::tape_num::TapeNum;
 
 /// Type alias for a simple result with a TapeError.
 pub type TapeResult<T> = Result<T, TapeError>;
@@ -268,7 +267,7 @@ impl Tape {
     /// Sets the given value as an 8-bit signed integer.
     /// * `v` - The value to set.
     pub fn seti8(&mut self, v: i8) -> TapeResult<()> {
-        self.set_tape_num(v)?;
+        self.set_num(v)?;
 
         Ok(())
     }
@@ -276,7 +275,7 @@ impl Tape {
     /// Sets the given value as an 16-bit signed integer.
     /// * `v` - The value to set.
     pub fn seti16(&mut self, v: i16) -> TapeResult<()> {
-        self.set_tape_num(v)?;
+        self.set_num(v)?;
 
         Ok(())
     }
@@ -284,7 +283,7 @@ impl Tape {
     /// Sets the given value as an 32-bit signed integer.
     /// * `v` - The value to set.
     pub fn seti32(&mut self, v: i32) -> TapeResult<()> {
-        self.set_tape_num(v)?;
+        self.set_num(v)?;
 
         Ok(())
     }
@@ -292,7 +291,7 @@ impl Tape {
     /// Sets the given value as an 64-bit signed integer.
     /// * `v` - The value to set.
     pub fn seti64(&mut self, v: i64) -> TapeResult<()> {
-        self.set_tape_num(v)?;
+        self.set_num(v)?;
 
         Ok(())
     }
@@ -300,7 +299,7 @@ impl Tape {
     /// Sets the given value as an 8-bit unsigned integer.
     /// * `v` - The value to set.
     pub fn setu8(&mut self, v: u8) -> TapeResult<()> {
-        self.set_tape_num(v)?;
+        self.set_num(v)?;
 
         Ok(())
     }
@@ -308,7 +307,7 @@ impl Tape {
     /// Sets the given value as an 16-bit unsigned integer.
     /// * `v` - The value to set.
     pub fn setu16(&mut self, v: u16) -> TapeResult<()> {
-        self.set_tape_num(v)?;
+        self.set_num(v)?;
 
         Ok(())
     }
@@ -316,7 +315,7 @@ impl Tape {
     /// Sets the given value as an 32-bit unsigned integer.
     /// * `v` - The value to set.
     pub fn setu32(&mut self, v: u32) -> TapeResult<()> {
-        self.set_tape_num(v)?;
+        self.set_num(v)?;
 
         Ok(())
     }
@@ -324,7 +323,7 @@ impl Tape {
     /// Sets the given value as an 64-bit unsigned integer.
     /// * `v` - The value to set.
     pub fn setu64(&mut self, v: u64) -> TapeResult<()> {
-        self.set_tape_num(v)?;
+        self.set_num(v)?;
 
         Ok(())
     }
@@ -332,7 +331,7 @@ impl Tape {
     /// Sets the given value as a 32-bit float.
     /// * `v` - The value to set.
     pub fn setf32(&mut self, v: f32) -> TapeResult<()> {
-        self.set_tape_num(v)?;
+        self.set_num(v)?;
 
         Ok(())
     }
@@ -340,7 +339,7 @@ impl Tape {
     /// Sets the given value as a 64-bit float.
     /// * `v` - The value to set.
     pub fn setf64(&mut self, v: f64) -> TapeResult<()> {
-        self.set_tape_num(v)?;
+        self.set_num(v)?;
 
         Ok(())
     }
@@ -423,16 +422,15 @@ impl Tape {
         Ok(())
     }
 
-    fn set_tape_num<T: TapeNum>(&mut self, v: T) -> TapeResult<()> {
+    fn set_num<T: Num>(&mut self, v: T) -> TapeResult<()> {
         for byte in v.get_bytes() {
             self.store(byte)?;
             self.step_fw()?;
         }
-
         Ok(())
     }
 
-    fn wrt_tape_num<T: TapeNum>(&mut self) -> TapeResult<()> {
+    fn wrt_tape_num<T: Num>(&mut self) -> TapeResult<()> {
         let slice = &self.data[self.ptr_index..self.ptr_index + T::number_of_bytes()];
         let v = slice.to_vec();
 

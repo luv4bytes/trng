@@ -270,7 +270,7 @@ impl Interpreter {
     }
 }
 
-/// Expects the given to `Token` to be a `Num` token.
+/// Expects the given `Token` to be a `Num` token.
 /// Returns an error if the token is different from what was expected.
 /// # Arguments
 /// * `token` - Option of a token.

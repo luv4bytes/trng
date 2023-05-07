@@ -17,7 +17,7 @@
 use std::fmt::Display;
 
 /// Defines functions for numeric types used in the tape.
-pub trait TapeNum: Display {
+pub trait Num: Display {
     /// Returns a vector with the bytes of the current instance in big-endian byte order.
     fn get_bytes(self) -> Vec<u8>;
 
@@ -28,7 +28,7 @@ pub trait TapeNum: Display {
     fn from(vec: Vec<u8>) -> Self;
 }
 
-impl TapeNum for u8 {
+impl Num for u8 {
     fn get_bytes(self) -> Vec<u8> {
         self.to_be_bytes().to_vec()
     }
@@ -44,7 +44,7 @@ impl TapeNum for u8 {
     }
 }
 
-impl TapeNum for i8 {
+impl Num for i8 {
     fn get_bytes(self) -> Vec<u8> {
         self.to_be_bytes().to_vec()
     }
@@ -60,7 +60,7 @@ impl TapeNum for i8 {
     }
 }
 
-impl TapeNum for u16 {
+impl Num for u16 {
     fn get_bytes(self) -> Vec<u8> {
         self.to_be_bytes().to_vec()
     }
@@ -77,7 +77,7 @@ impl TapeNum for u16 {
     }
 }
 
-impl TapeNum for i16 {
+impl Num for i16 {
     fn get_bytes(self) -> Vec<u8> {
         self.to_be_bytes().to_vec()
     }
@@ -94,7 +94,7 @@ impl TapeNum for i16 {
     }
 }
 
-impl TapeNum for u32 {
+impl Num for u32 {
     fn get_bytes(self) -> Vec<u8> {
         self.to_be_bytes().to_vec()
     }
@@ -113,7 +113,7 @@ impl TapeNum for u32 {
     }
 }
 
-impl TapeNum for i32 {
+impl Num for i32 {
     fn get_bytes(self) -> Vec<u8> {
         self.to_be_bytes().to_vec()
     }
@@ -132,7 +132,7 @@ impl TapeNum for i32 {
     }
 }
 
-impl TapeNum for u64 {
+impl Num for u64 {
     fn get_bytes(self) -> Vec<u8> {
         self.to_be_bytes().to_vec()
     }
@@ -155,7 +155,7 @@ impl TapeNum for u64 {
     }
 }
 
-impl TapeNum for i64 {
+impl Num for i64 {
     fn get_bytes(self) -> Vec<u8> {
         self.to_be_bytes().to_vec()
     }
@@ -178,7 +178,7 @@ impl TapeNum for i64 {
     }
 }
 
-impl TapeNum for f32 {
+impl Num for f32 {
     fn get_bytes(self) -> Vec<u8> {
         self.to_be_bytes().to_vec()
     }
@@ -197,7 +197,7 @@ impl TapeNum for f32 {
     }
 }
 
-impl TapeNum for f64 {
+impl Num for f64 {
     fn get_bytes(self) -> Vec<u8> {
         self.to_be_bytes().to_vec()
     }
